@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { cn } from "../../../lib/utils";
 
 export type PeriodFilter = "3M" | "6M" | "1Y";
@@ -33,7 +34,7 @@ export function ChartFilterBar({
             type="button"
             onClick={() => onPeriodChange(opt)}
             className={cn(
-              "px-4 py-1.5 font-display font-bold text-xs transition-colors",
+              "relative px-4 py-1.5 font-display font-bold text-xs transition-colors",
               period === opt
                 ? "bg-base-ink text-base-surface"
                 : "bg-base-surface text-base-ink/60 hover:bg-base-ink/5",
@@ -41,7 +42,14 @@ export function ChartFilterBar({
             aria-pressed={period === opt}
             aria-label={`${opt} bulan`}
           >
-            {opt}
+            {period === opt && (
+              <motion.span
+                layoutId="periodBg"
+                className="absolute inset-0 bg-base-ink"
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              />
+            )}
+            <span className="relative z-10">{opt}</span>
           </button>
         ))}
       </div>
@@ -53,19 +61,35 @@ export function ChartFilterBar({
             type="button"
             onClick={() => onChartTypeChange(opt.value)}
             className={cn(
-              "px-4 py-1.5 font-display font-bold text-xs transition-colors",
+              "relative px-4 py-1.5 font-display font-bold text-xs transition-colors",
               chartType === opt.value
-                ? opt.value === "income"
-                  ? "bg-accent-lime text-base-ink"
-                  : opt.value === "expense"
-                    ? "bg-accent-pink text-white"
-                    : "bg-base-ink text-base-surface"
+                ? "text-base-ink"
                 : "bg-base-surface text-base-ink/60 hover:bg-base-ink/5",
             )}
             aria-pressed={chartType === opt.value}
             aria-label={opt.label}
           >
-            {opt.label}
+            {chartType === opt.value && (
+              <motion.span
+                layoutId="chartTypeBg"
+                className={cn(
+                  "absolute inset-0",
+                  opt.value === "income" && "bg-accent-lime",
+                  opt.value === "expense" && "bg-accent-pink",
+                  opt.value === "both" && "bg-base-ink",
+                )}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              />
+            )}
+            <span
+              className={cn(
+                "relative z-10",
+                chartType === opt.value && opt.value === "both" && "text-base-surface",
+                chartType === opt.value && opt.value === "expense" && "text-white",
+              )}
+            >
+              {opt.label}
+            </span>
           </button>
         ))}
       </div>
