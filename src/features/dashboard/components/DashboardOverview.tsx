@@ -1,13 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "../../../components/ui/Card/Card";
 import { Skeleton } from "../../../components/ui/Skeleton/Skeleton";
 import { useTransactionStore } from "../../../store/useTransactionStore";
 import { useDashboardSummary } from "../hooks/useDashboardSummary";
 import { SummaryCardGroup } from "./SummaryCardGroup";
+import { ChartFilterBar, type PeriodFilter, type ChartTypeFilter } from "./ChartFilterBar";
+import { MonthlyBarChart } from "./MonthlyBarChart";
+import { CategoryDonutChart } from "./CategoryDonutChart";
 
 export function DashboardOverview() {
   const isLoading = useTransactionStore((s) => s.isLoading);
+  const transactions = useTransactionStore((s) => s.transactions);
   const fetchAll = useTransactionStore((s) => s.fetchAll);
+
+  const [period, setPeriod] = useState<PeriodFilter>("6M");
+  const [chartType, setChartType] = useState<ChartTypeFilter>("expense");
 
   useEffect(() => {
     fetchAll();
@@ -35,16 +42,22 @@ export function DashboardOverview() {
 
       <Card className="p-5">
         <p className="font-display font-bold text-lg mb-4">Pengeluaran Bulanan</p>
-        <div className="h-64 flex items-center justify-center border-3 border-dashed border-base-ink/20 rounded-brutal">
-          <p className="font-body text-base-ink/40">Grafik akan muncul di Fase 4</p>
-        </div>
+        <ChartFilterBar
+          period={period}
+          onPeriodChange={setPeriod}
+          chartType={chartType}
+          onChartTypeChange={setChartType}
+        />
+        <MonthlyBarChart
+          transactions={transactions}
+          period={period}
+          chartType={chartType}
+        />
       </Card>
 
       <Card className="p-5">
         <p className="font-display font-bold text-lg mb-4">Breakdown Kategori</p>
-        <div className="h-64 flex items-center justify-center border-3 border-dashed border-base-ink/20 rounded-brutal">
-          <p className="font-body text-base-ink/40">Donut chart akan muncul di Fase 4</p>
-        </div>
+        <CategoryDonutChart transactions={transactions} />
       </Card>
     </div>
   );
