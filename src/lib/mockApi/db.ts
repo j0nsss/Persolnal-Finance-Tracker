@@ -1,6 +1,8 @@
 import type { Transaction } from "../../types/transaction";
 
 const DB_KEY = "neofin_transactions";
+const DB_VERSION_KEY = "neofin_db_version";
+const DB_VERSION = 2;
 
 export function getSeedData(): Transaction[] {
   const now = new Date();
@@ -9,7 +11,9 @@ export function getSeedData(): Transaction[] {
 
   const makeDate = (monthOffset: number, day: number) => {
     const d = new Date(y, m + monthOffset, day);
-    return d.toISOString().split("T")[0];
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${d.getFullYear()}-${mm}-${dd}`;
   };
 
   const makeTS = (dateStr: string) => new Date(dateStr + "T08:00:00Z").toISOString();
@@ -91,6 +95,13 @@ export function getSeedData(): Transaction[] {
 }
 
 export function loadTransactions(): Transaction[] {
+  const version = localStorage.getItem(DB_VERSION_KEY);
+  if (version !== String(DB_VERSION)) {
+    const seed = getSeedData();
+    localStorage.setItem(DB_KEY, JSON.stringify(seed));
+    localStorage.setItem(DB_VERSION_KEY, String(DB_VERSION));
+    return seed;
+  }
   const raw = localStorage.getItem(DB_KEY);
   if (raw) {
     return JSON.parse(raw);

@@ -15,36 +15,46 @@ import { ForecastCard } from "./ForecastCard";
 import { formatCurrency } from "../../../lib/utils";
 import { cn } from "../../../lib/utils";
 
-const metricCardConfig = [
-  {
-    icon: Wallet,
-    label: "Saldo Saat Ini",
-    bg: "bg-gradient-to-br from-[#3F8EFF] to-[#00C9D4]",
-    getValue: (cb: number) => formatCurrency(cb),
-    getValueArg: (balance: number, _avg: number, _rate: number, _highest: { label: string; total: number } | null) => balance,
-  },
-  {
-    icon: TrendingUp,
-    label: "Rata-rata Cashflow",
-    bg: "bg-gradient-to-br from-[#FF6B1A] to-[#FFD600]",
-    getValue: (v: number) => `${formatCurrency(v)}/bln`,
-    getValueArg: (_balance: number, avg: number, _rate: number, _highest: { label: string; total: number } | null) => avg,
-  },
-  {
-    icon: PiggyBank,
-    label: "Rasio Tabungan",
-    bg: "bg-gradient-to-br from-[#D4FF3F] to-[#00C853]",
-    getValue: (v: number) => `${v}%`,
-    getValueArg: (_balance: number, _avg: number, rate: number, _highest: { label: string; total: number } | null) => rate,
-  },
-  {
-    icon: TrendingUp,
-    label: (h: { label: string } | null) => h ? `Pengeluaran ${h.label}` : "Pengeluaran",
-    bg: "bg-gradient-to-br from-[#FF3F8E] to-[#9E00FF]",
-    getValue: (v: number) => formatCurrency(v),
-    getValueArg: (_balance: number, _avg: number, _rate: number, highest: { label: string; total: number } | null) => highest?.total ?? 0,
-  },
-];
+interface MetricCardConfig {
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
+  label: string;
+  bg: string;
+  value: string;
+}
+
+function buildMetricCards(
+  balance: number,
+  avg: number,
+  rate: number,
+  highest: { label: string; total: number } | null,
+): MetricCardConfig[] {
+  return [
+    {
+      icon: Wallet,
+      label: "Saldo Saat Ini",
+      bg: "bg-accent-blue",
+      value: formatCurrency(balance),
+    },
+    {
+      icon: TrendingUp,
+      label: "Rata-rata Cashflow",
+      bg: "bg-accent-orange",
+      value: `${formatCurrency(avg)}/bln`,
+    },
+    {
+      icon: PiggyBank,
+      label: "Rasio Tabungan",
+      bg: "bg-accent-lime",
+      value: `${rate}%`,
+    },
+    {
+      icon: TrendingUp,
+      label: highest ? `Pengeluaran ${highest.label}` : "Pengeluaran",
+      bg: "bg-accent-pink",
+      value: formatCurrency(highest?.total ?? 0),
+    },
+  ];
+}
 
 export function AnalyticsPage() {
   const transactions = useTransactionStore((s) => s.transactions);
@@ -122,30 +132,14 @@ export function AnalyticsPage() {
     >
       {/* Top Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard
-          icon={metricCardConfig[0].icon}
-          label={metricCardConfig[0].label}
-          bg={metricCardConfig[0].bg}
-          value={metricCardConfig[0].getValue(metricCardConfig[0].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
-        />
-        <MetricCard
-          icon={metricCardConfig[1].icon}
-          label={metricCardConfig[1].label}
-          bg={metricCardConfig[1].bg}
-          value={metricCardConfig[1].getValue(metricCardConfig[1].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
-        />
-        <MetricCard
-          icon={metricCardConfig[2].icon}
-          label={metricCardConfig[2].label}
-          bg={metricCardConfig[2].bg}
-          value={metricCardConfig[2].getValue(metricCardConfig[2].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
-        />
-        <MetricCard
-          icon={metricCardConfig[3].icon}
-          label={typeof metricCardConfig[3].label === "function" ? metricCardConfig[3].label(insights.highestExpenseMonth) : metricCardConfig[3].label}
-          bg={metricCardConfig[3].bg}
-          value={metricCardConfig[3].getValue(metricCardConfig[3].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
-        />
+        {buildMetricCards(
+          currentBalance,
+          insights.averageMonthlyCashflow,
+          insights.savingsRate,
+          insights.highestExpenseMonth,
+        ).map((card, i) => (
+          <MetricCard key={i} icon={card.icon} label={card.label} bg={card.bg} value={card.value} />
+        ))}
       </div>
 
       {/* Charts Section */}
@@ -244,6 +238,8 @@ function MetricCard({
   bg: string;
   value: string;
 }) {
+  const isLight = bg === "bg-accent-lime";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -254,12 +250,12 @@ function MetricCard({
       className={cn("rounded-brutal border-3 border-base-ink shadow-brutal p-4", bg)}
     >
       <div className="flex items-center gap-2 mb-2">
-        <Icon size={14} strokeWidth={2.5} className="text-black/60" />
-        <p className="font-body text-[11px] text-black/70 uppercase tracking-wider truncate">
+        <Icon size={14} strokeWidth={2.5} className={isLight ? "text-black/60" : "text-white/70"} />
+        <p className={cn("font-body text-[11px] uppercase tracking-wider truncate", isLight ? "text-black/70" : "text-white/80")}>
           {label}
         </p>
       </div>
-      <p className="font-mono tracking-tight tabular-nums text-base font-bold truncate text-black">
+      <p className={cn("font-mono tracking-tight tabular-nums text-base font-bold truncate", isLight ? "text-black" : "text-white")}>
         {value}
       </p>
     </motion.div>

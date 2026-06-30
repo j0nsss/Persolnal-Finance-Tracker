@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { PiggyBank, TrendingUp, TrendingDown } from "lucide-react";
 import { useCountUp } from "../../../hooks/useCountUp";
-import { cn } from "../../../lib/utils";
 
 interface SavingsRateCardProps {
   savingsRate: number;

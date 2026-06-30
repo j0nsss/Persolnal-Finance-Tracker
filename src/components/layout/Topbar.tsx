@@ -1,5 +1,7 @@
+import { motion } from "framer-motion";
 import { useUIStore } from "../../store/useUIStore";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { cn } from "../../lib/utils";
 
 const tabLabels: Record<string, string> = {
   overview: "Overview",
@@ -7,33 +9,26 @@ const tabLabels: Record<string, string> = {
   analytics: "Analitik",
 };
 
+const navItems = [
+  { id: "overview", label: "Overview" },
+  { id: "transactions", label: "Transaksi" },
+  { id: "analytics", label: "Analitik" },
+];
+
 interface TopbarProps {
   onAddTransaction: () => void;
 }
 
 export function Topbar({ onAddTransaction }: TopbarProps) {
-  const { activeTab, toggleSidebar } = useUIStore();
+  const { activeTab, setActiveTab } = useUIStore();
   const isMobile = useMediaQuery("(max-width: 767px)");
 
   return (
     <header className="sticky top-0 z-30 bg-base-bg border-b-3 border-base-ink">
       <div className="flex items-center justify-between px-4 md:px-6 h-16">
-        <div className="flex items-center gap-4">
-          {isMobile && (
-            <button
-              onClick={toggleSidebar}
-              className="rounded-brutal border-3 border-base-ink p-2 hover:bg-base-ink/5 transition-colors"
-              aria-label="Buka menu navigasi"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          )}
-          <h2 className="font-display font-bold text-xl md:text-2xl">
-            {tabLabels[activeTab] || "Overview"}
-          </h2>
-        </div>
+        <h2 className="font-display font-bold text-xl md:text-2xl">
+          {tabLabels[activeTab] || "Overview"}
+        </h2>
 
         <button
           onClick={onAddTransaction}
@@ -43,6 +38,38 @@ export function Topbar({ onAddTransaction }: TopbarProps) {
           + Transaksi
         </button>
       </div>
+
+      {isMobile && (
+        <nav className="px-4 pb-3" aria-label="Navigasi tab">
+          <div className="flex items-center gap-1 bg-base-ink/5 rounded-brutal p-1">
+            {navItems.map((item) => {
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={cn(
+                    "relative flex-1 font-display font-bold text-xs py-2 px-3 rounded-brutal transition-colors",
+                    isActive
+                      ? "text-base-ink"
+                      : "text-base-ink/50 hover:text-base-ink/80",
+                  )}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="mobileActiveTab"
+                      className="absolute inset-0 bg-base-surface border-2 border-base-ink rounded-brutal"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </header>
   );
 }

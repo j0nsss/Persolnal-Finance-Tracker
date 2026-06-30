@@ -1,7 +1,6 @@
 import { type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
-import { MobileBottomNav } from "./MobileBottomNav";
 import { PageTransition } from "./PageTransition";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useUIStore } from "../../store/useUIStore";
@@ -30,7 +29,6 @@ export function DashboardShell({ onAddTransaction, children }: DashboardShellPro
         className={cn(
           "transition-all duration-300 ease-in-out",
           sidebarOffset(),
-          isMobile && "pb-20",
         )}
       >
         <Topbar onAddTransaction={onAddTransaction} />
@@ -40,7 +38,6 @@ export function DashboardShell({ onAddTransaction, children }: DashboardShellPro
           </PageTransition>
         </div>
       </main>
-      {isMobile && <MobileBottomNav />}
     </div>
   );
 }
