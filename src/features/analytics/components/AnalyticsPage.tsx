@@ -19,33 +19,29 @@ const metricCardConfig = [
   {
     icon: Wallet,
     label: "Saldo Saat Ini",
-    bg: "bg-[#E3FFEB]",
+    bg: "bg-[#3F8EFF]",
     getValue: (cb: number) => formatCurrency(cb),
-    getValueColor: (cb: number) => cb >= 0 ? "text-feedback-success" : "text-feedback-danger",
     getValueArg: (balance: number, _avg: number, _rate: number, _highest: { label: string; total: number } | null) => balance,
   },
   {
     icon: TrendingUp,
     label: "Rata-rata Cashflow",
-    bg: "bg-[#FFFEE3]",
+    bg: "bg-[#FF6B1A]",
     getValue: (v: number) => `${formatCurrency(v)}/bln`,
-    getValueColor: (v: number) => v >= 0 ? "text-feedback-success" : "text-feedback-danger",
     getValueArg: (_balance: number, avg: number, _rate: number, _highest: { label: string; total: number } | null) => avg,
   },
   {
     icon: PiggyBank,
     label: "Rasio Tabungan",
-    bg: "bg-accent-lime",
+    bg: "bg-[#D4FF3F]",
     getValue: (v: number) => `${v}%`,
-    getValueColor: (v: number) => v >= 25 ? "text-feedback-success" : v >= 10 ? "text-accent-blue" : "text-feedback-danger",
     getValueArg: (_balance: number, _avg: number, rate: number, _highest: { label: string; total: number } | null) => rate,
   },
   {
     icon: TrendingUp,
     label: (h: { label: string } | null) => h ? `Pengeluaran ${h.label}` : "Pengeluaran",
-    bg: "bg-[#FFE3E3]",
+    bg: "bg-[#FF3F8E]",
     getValue: (v: number) => formatCurrency(v),
-    getValueColor: () => "text-feedback-danger",
     getValueArg: (_balance: number, _avg: number, _rate: number, highest: { label: string; total: number } | null) => highest?.total ?? 0,
   },
 ];
@@ -131,28 +127,24 @@ export function AnalyticsPage() {
           label={metricCardConfig[0].label}
           bg={metricCardConfig[0].bg}
           value={metricCardConfig[0].getValue(metricCardConfig[0].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
-          valueColor={metricCardConfig[0].getValueColor(currentBalance)}
         />
         <MetricCard
           icon={metricCardConfig[1].icon}
           label={metricCardConfig[1].label}
           bg={metricCardConfig[1].bg}
           value={metricCardConfig[1].getValue(metricCardConfig[1].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
-          valueColor={metricCardConfig[1].getValueColor(insights.averageMonthlyCashflow)}
         />
         <MetricCard
           icon={metricCardConfig[2].icon}
           label={metricCardConfig[2].label}
           bg={metricCardConfig[2].bg}
           value={metricCardConfig[2].getValue(metricCardConfig[2].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
-          valueColor={metricCardConfig[2].getValueColor(insights.savingsRate)}
         />
         <MetricCard
           icon={metricCardConfig[3].icon}
           label={typeof metricCardConfig[3].label === "function" ? metricCardConfig[3].label(insights.highestExpenseMonth) : metricCardConfig[3].label}
           bg={metricCardConfig[3].bg}
           value={metricCardConfig[3].getValue(metricCardConfig[3].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
-          valueColor={metricCardConfig[3].getValueColor()}
         />
       </div>
 
@@ -246,13 +238,11 @@ function MetricCard({
   label,
   bg,
   value,
-  valueColor,
 }: {
   icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
   label: string;
   bg: string;
   value: string;
-  valueColor: string;
 }) {
   return (
     <motion.div
@@ -264,12 +254,12 @@ function MetricCard({
       className={cn("rounded-brutal border-3 border-base-ink shadow-brutal p-4", bg)}
     >
       <div className="flex items-center gap-2 mb-2">
-        <Icon size={14} strokeWidth={2.5} className="text-base-ink/40" />
-        <p className="font-body text-[11px] text-base-ink/50 uppercase tracking-wider truncate">
+        <Icon size={14} strokeWidth={2.5} className="text-black/60" />
+        <p className="font-body text-[11px] text-black/70 uppercase tracking-wider truncate">
           {label}
         </p>
       </div>
-      <p className={`font-mono tracking-tight tabular-nums text-base font-bold truncate ${valueColor}`}>
+      <p className="font-mono tracking-tight tabular-nums text-base font-bold truncate text-black">
         {value}
       </p>
     </motion.div>

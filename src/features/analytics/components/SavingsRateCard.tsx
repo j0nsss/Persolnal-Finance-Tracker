@@ -33,9 +33,9 @@ export function SavingsRateCard({ savingsRate, totalIncome, totalExpense }: Savi
         {animatedRate}<span className="text-base-ink/30">%</span>
       </p>
 
-      <div className="w-full h-3 rounded-sm border-2 border-base-ink bg-base-ink/20 overflow-hidden">
+      <div className="w-full h-3 rounded-sm border-2 border-base-ink bg-black overflow-hidden">
         <motion.div
-          className="h-full rounded-sm bg-gradient-to-r from-cyan-400 to-blue-600"
+          className="h-full rounded-sm bg-[#D4FF3F]"
           initial={{ width: "0%" }}
           animate={{ width: `${Math.min(100, Math.max(0, savingsRate))}%` }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}

@@ -30,7 +30,7 @@ export function TopCategoryAlert({
     <div
       className={cn(
         "rounded-brutal border-3 shadow-brutal p-5",
-        hasWarning ? "border-feedback-danger bg-amber-50" : "border-base-ink bg-base-surface",
+        hasWarning ? "border-feedback-danger bg-[#FF9900]" : "border-base-ink bg-base-surface",
       )}
     >
       {!hasWarning ? (
@@ -57,14 +57,14 @@ export function TopCategoryAlert({
                 Kebocoran di{" "}
                 <span style={{ color: color ?? undefined }}>{label}</span>
               </p>
-              <p className="font-body text-xs text-base-ink/60 mt-0.5 leading-relaxed">
+              <p className="font-body text-xs text-black/80 mt-0.5 leading-relaxed">
                 {message}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-sm border-t-2 border-base-ink/10 pt-3">
-            <span className="font-body text-[11px] text-base-ink/40">Total bulan ini</span>
+          <div className="flex items-center justify-between text-sm border-t-2 border-black/10 pt-3">
+            <span className="font-body text-[11px] text-black/70">Total bulan ini</span>
             <span
               className="font-mono tracking-tight tabular-nums font-bold"
               style={{ color: color ?? undefined }}
@@ -74,22 +74,22 @@ export function TopCategoryAlert({
           </div>
 
           <div className="flex items-center justify-between text-[11px]">
-            <span className="font-body text-base-ink/40">Persentase</span>
-            <span className="font-mono tracking-tight tabular-nums font-bold text-base-ink/70">
+            <span className="font-body text-black/70">Persentase</span>
+            <span className="font-mono tracking-tight tabular-nums font-bold text-black">
               {percentage}%
             </span>
           </div>
 
           {dailyAvg != null && dailyAvg > 0 && (
             <div className="flex items-center justify-between text-[11px]">
-              <span className="font-body text-base-ink/40">Rata-rata per hari</span>
-              <span className="font-mono tracking-tight tabular-nums font-bold text-base-ink/70">
+              <span className="font-body text-black/70">Rata-rata per hari</span>
+              <span className="font-mono tracking-tight tabular-nums font-bold text-black">
                 {formatCurrency(dailyAvg)}
               </span>
             </div>
           )}
 
-          <div className="flex items-center gap-1 mt-1 text-feedback-danger">
+          <div className="flex items-center gap-1 mt-1 text-black">
             <span className="font-display font-bold text-[10px] uppercase tracking-wider">
               Perlu Evaluasi
             </span>

@@ -13,7 +13,7 @@ interface CategoryChartProps {
   data: CategoryBreakdownItem[];
 }
 
-const SLICE_COLORS = ["#7B2D8B", "#1B7F4A", "#C76B1E", "#B22234", "#4A6FA5", "#D4A017", "#8B4513"];
+const SLICE_COLORS = ["#9E00FF", "#FF6B1A", "#FFD600", "#00C853"];
 
 export function CategoryChart({ data }: CategoryChartProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -69,21 +69,21 @@ export function CategoryChart({ data }: CategoryChartProps) {
                     <path
                       d={describeArc(p.cx, p.cy, p.innerRadius, p.startAngle, p.endAngle)}
                       fill={p.fill}
-                      stroke="#000"
-                      strokeWidth={1.5}
-                    />
-                  </g>
-                );
-              }}
-              onMouseEnter={(_, index) => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              {data.map((entry, index) => (
-                <Cell
-                  key={entry.categoryId}
-                  fill={SLICE_COLORS[index % SLICE_COLORS.length]}
                   stroke="#000"
-                  strokeWidth={1.5}
+                  strokeWidth={2}
+                />
+              </g>
+            );
+          }}
+          onMouseEnter={(_, index) => setHoveredIndex(index)}
+          onMouseLeave={() => setHoveredIndex(null)}
+        >
+          {data.map((entry, index) => (
+            <Cell
+              key={entry.categoryId}
+              fill={SLICE_COLORS[index % SLICE_COLORS.length]}
+              stroke="#000"
+              strokeWidth={2}
                   opacity={
                     hoveredIndex != null || legendHoveredIndex != null
                       ? index === hoveredIndex || index === legendHoveredIndex

@@ -90,12 +90,12 @@ export function MonthlyCashflowChart({ data }: MonthlyCashflowChartProps) {
       <svg width={0} height={0} className="absolute">
         <defs>
           <linearGradient id={`${gradientId}-income`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#00F0FF" stopOpacity={0.5} />
-            <stop offset="100%" stopColor="#00F0FF" stopOpacity={0.05} />
+            <stop offset="0%" stopColor="#00F0FF" stopOpacity={0.6} />
+            <stop offset="100%" stopColor="#00F0FF" stopOpacity={0.1} />
           </linearGradient>
           <linearGradient id={`${gradientId}-expense`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#FF007A" stopOpacity={0.5} />
-            <stop offset="100%" stopColor="#FF007A" stopOpacity={0.05} />
+            <stop offset="0%" stopColor="#FF007A" stopOpacity={0.6} />
+            <stop offset="100%" stopColor="#FF007A" stopOpacity={0.1} />
           </linearGradient>
         </defs>
       </svg>
@@ -139,10 +139,10 @@ export function MonthlyCashflowChart({ data }: MonthlyCashflowChartProps) {
             dataKey="expense"
             name="Pengeluaran"
             stroke="#FF007A"
-            strokeWidth={2.5}
+            strokeWidth={3}
             fill={`url(#${gradientId}-expense)`}
-            dot={{ r: 3, fill: "#FF007A", stroke: "#000", strokeWidth: 2 }}
-            activeDot={{ r: 5, fill: "#FF007A", stroke: "#000", strokeWidth: 2 }}
+            dot={{ r: 4, fill: "#FF007A", stroke: "#000", strokeWidth: 2 }}
+            activeDot={{ r: 6, fill: "#FF007A", stroke: "#000", strokeWidth: 2 }}
             isAnimationActive={true}
             animationDuration={600}
             animationEasing="ease-in-out"
@@ -152,10 +152,10 @@ export function MonthlyCashflowChart({ data }: MonthlyCashflowChartProps) {
             dataKey="income"
             name="Pemasukan"
             stroke="#00F0FF"
-            strokeWidth={2.5}
+            strokeWidth={3}
             fill={`url(#${gradientId}-income)`}
-            dot={{ r: 3, fill: "#00F0FF", stroke: "#000", strokeWidth: 2 }}
-            activeDot={{ r: 5, fill: "#00F0FF", stroke: "#000", strokeWidth: 2 }}
+            dot={{ r: 4, fill: "#00F0FF", stroke: "#000", strokeWidth: 2 }}
+            activeDot={{ r: 6, fill: "#00F0FF", stroke: "#000", strokeWidth: 2 }}
             isAnimationActive={true}
             animationDuration={600}
             animationEasing="ease-in-out"
