@@ -13,7 +13,7 @@ interface CategoryChartProps {
   data: CategoryBreakdownItem[];
 }
 
-const SLICE_COLORS = ["#00C9D4", "#3F8EFF", "#FF3F8E", "#FF6B1A", "#D4FF3F"];
+const SLICE_COLORS = ["#7B2D8B", "#1B7F4A", "#C76B1E", "#B22234", "#4A6FA5", "#D4A017", "#8B4513"];
 
 export function CategoryChart({ data }: CategoryChartProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);

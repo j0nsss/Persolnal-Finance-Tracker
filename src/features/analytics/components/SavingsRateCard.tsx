@@ -13,8 +13,6 @@ export function SavingsRateCard({ savingsRate, totalIncome, totalExpense }: Savi
   const animatedRate = useCountUp(Math.max(0, savingsRate), 1.2);
   const netCashflow = totalIncome - totalExpense;
 
-  const fillColor = "bg-accent-blue";
-
   return (
     <div className="rounded-brutal border-3 border-base-ink bg-base-surface shadow-brutal p-5 flex flex-col gap-3">
       <div className="flex items-center justify-between">
@@ -35,9 +33,9 @@ export function SavingsRateCard({ savingsRate, totalIncome, totalExpense }: Savi
         {animatedRate}<span className="text-base-ink/30">%</span>
       </p>
 
-      <div className="w-full h-3 rounded-sm border-2 border-base-ink bg-base-bg overflow-hidden">
+      <div className="w-full h-3 rounded-sm border-2 border-base-ink bg-base-ink/20 overflow-hidden">
         <motion.div
-          className={cn("h-full rounded-sm transition-colors", fillColor)}
+          className="h-full rounded-sm bg-gradient-to-r from-cyan-400 to-blue-600"
           initial={{ width: "0%" }}
           animate={{ width: `${Math.min(100, Math.max(0, savingsRate))}%` }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}

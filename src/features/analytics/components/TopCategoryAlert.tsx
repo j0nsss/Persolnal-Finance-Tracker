@@ -30,7 +30,7 @@ export function TopCategoryAlert({
     <div
       className={cn(
         "rounded-brutal border-3 shadow-brutal p-5",
-        hasWarning ? "border-feedback-danger bg-base-surface" : "border-base-ink bg-base-surface",
+        hasWarning ? "border-feedback-danger bg-amber-50" : "border-base-ink bg-base-surface",
       )}
     >
       {!hasWarning ? (
@@ -44,8 +44,8 @@ export function TopCategoryAlert({
         <div className="flex flex-col gap-3">
           <div className="flex items-start gap-3">
             <motion.div
-              animate={{ rotate: 4 }}
-              transition={{ type: "spring", stiffness: 100, damping: 10 }}
+              animate={{ rotate: [0, 4, 0, -4, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               className="rounded-brutal border-2 border-base-ink shrink-0 p-2"
               style={{ backgroundColor: color ?? "#6B7280" }}
             >

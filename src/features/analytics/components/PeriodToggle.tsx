@@ -32,7 +32,7 @@ export function PeriodToggle({ period, onChange }: PeriodToggleProps) {
           className={cn(
             "px-4 py-2 font-display font-bold text-xs transition-all",
             period === opt.value
-              ? "bg-accent-lime text-base-ink shadow-brutal"
+              ? "bg-base-ink text-accent-lime"
               : "bg-base-surface text-base-ink/60 hover:bg-base-ink/5",
           )}
           aria-pressed={period === opt.value}

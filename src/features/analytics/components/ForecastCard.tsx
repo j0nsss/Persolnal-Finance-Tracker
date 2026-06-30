@@ -44,8 +44,8 @@ export function ForecastCard({
         {formatCurrency(animatedForecast)}
       </p>
 
-      <div className="space-y-2.5 border-t-2 border-base-ink/10 pt-3">
-        <div className="flex items-center justify-between text-[11px]">
+      <div className="space-y-2 border-t-2 border-base-ink/10 pt-3">
+        <div className="flex items-center justify-between text-[11px] bg-accent-lime/20 rounded-sm px-2 py-1.5">
           <div className="flex items-center gap-1.5">
             <Wallet size={12} strokeWidth={2} className="text-base-ink/30 shrink-0" />
             <span className="font-body text-base-ink/40">Saldo saat ini</span>
@@ -57,7 +57,7 @@ export function ForecastCard({
           </span>
         </div>
 
-        <div className="flex items-center justify-between text-[11px]">
+        <div className="flex items-center justify-between text-[11px] bg-accent-blue/15 rounded-sm px-2 py-1.5">
           <div className="flex items-center gap-1.5">
             <BarChart3 size={12} strokeWidth={2} className="text-base-ink/30 shrink-0" />
             <span className="font-body text-base-ink/40">Rata-rata cashflow</span>
@@ -69,7 +69,7 @@ export function ForecastCard({
           </span>
         </div>
 
-        <div className="flex items-center justify-between text-[11px]">
+        <div className="flex items-center justify-between text-[11px] bg-accent-orange/15 rounded-sm px-2 py-1.5">
           <div className="flex items-center gap-1.5">
             <CalendarDays size={12} strokeWidth={2} className="text-base-ink/30 shrink-0" />
             <span className="font-body text-base-ink/40">Rata-rata pengeluaran</span>

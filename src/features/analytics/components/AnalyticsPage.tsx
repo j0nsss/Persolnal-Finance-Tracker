@@ -15,6 +15,41 @@ import { ForecastCard } from "./ForecastCard";
 import { formatCurrency } from "../../../lib/utils";
 import { cn } from "../../../lib/utils";
 
+const metricCardConfig = [
+  {
+    icon: Wallet,
+    label: "Saldo Saat Ini",
+    bg: "bg-[#E3FFEB]",
+    getValue: (cb: number) => formatCurrency(cb),
+    getValueColor: (cb: number) => cb >= 0 ? "text-feedback-success" : "text-feedback-danger",
+    getValueArg: (balance: number, _avg: number, _rate: number, _highest: { label: string; total: number } | null) => balance,
+  },
+  {
+    icon: TrendingUp,
+    label: "Rata-rata Cashflow",
+    bg: "bg-[#FFFEE3]",
+    getValue: (v: number) => `${formatCurrency(v)}/bln`,
+    getValueColor: (v: number) => v >= 0 ? "text-feedback-success" : "text-feedback-danger",
+    getValueArg: (_balance: number, avg: number, _rate: number, _highest: { label: string; total: number } | null) => avg,
+  },
+  {
+    icon: PiggyBank,
+    label: "Rasio Tabungan",
+    bg: "bg-accent-lime",
+    getValue: (v: number) => `${v}%`,
+    getValueColor: (v: number) => v >= 25 ? "text-feedback-success" : v >= 10 ? "text-accent-blue" : "text-feedback-danger",
+    getValueArg: (_balance: number, _avg: number, rate: number, _highest: { label: string; total: number } | null) => rate,
+  },
+  {
+    icon: TrendingUp,
+    label: (h: { label: string } | null) => h ? `Pengeluaran ${h.label}` : "Pengeluaran",
+    bg: "bg-[#FFE3E3]",
+    getValue: (v: number) => formatCurrency(v),
+    getValueColor: () => "text-feedback-danger",
+    getValueArg: (_balance: number, _avg: number, _rate: number, highest: { label: string; total: number } | null) => highest?.total ?? 0,
+  },
+];
+
 export function AnalyticsPage() {
   const transactions = useTransactionStore((s) => s.transactions);
   const isLoading = useTransactionStore((s) => s.isLoading);
@@ -92,40 +127,37 @@ export function AnalyticsPage() {
       {/* Top Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
-          icon={Wallet}
-          label="Saldo Saat Ini"
-          value={formatCurrency(currentBalance)}
-          valueColor={currentBalance >= 0 ? "text-feedback-success" : "text-feedback-danger"}
+          icon={metricCardConfig[0].icon}
+          label={metricCardConfig[0].label}
+          bg={metricCardConfig[0].bg}
+          value={metricCardConfig[0].getValue(metricCardConfig[0].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
+          valueColor={metricCardConfig[0].getValueColor(currentBalance)}
         />
         <MetricCard
-          icon={TrendingUp}
-          label="Rata-rata Cashflow"
-          value={`${formatCurrency(insights.averageMonthlyCashflow)}/bln`}
-          valueColor={insights.averageMonthlyCashflow >= 0 ? "text-feedback-success" : "text-feedback-danger"}
+          icon={metricCardConfig[1].icon}
+          label={metricCardConfig[1].label}
+          bg={metricCardConfig[1].bg}
+          value={metricCardConfig[1].getValue(metricCardConfig[1].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
+          valueColor={metricCardConfig[1].getValueColor(insights.averageMonthlyCashflow)}
         />
         <MetricCard
-          icon={PiggyBank}
-          label="Rasio Tabungan"
-          value={`${insights.savingsRate}%`}
-          valueColor={
-            insights.savingsRate >= 25
-              ? "text-feedback-success"
-              : insights.savingsRate >= 10
-                ? "text-accent-blue"
-                : "text-feedback-danger"
-          }
+          icon={metricCardConfig[2].icon}
+          label={metricCardConfig[2].label}
+          bg={metricCardConfig[2].bg}
+          value={metricCardConfig[2].getValue(metricCardConfig[2].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
+          valueColor={metricCardConfig[2].getValueColor(insights.savingsRate)}
         />
         <MetricCard
-          icon={TrendingUp}
-          label={insights.highestExpenseMonth ? `Pengeluaran ${insights.highestExpenseMonth.label}` : "Pengeluaran"}
-          value={insights.highestExpenseMonth ? formatCurrency(insights.highestExpenseMonth.total) : "—"}
-          valueColor="text-feedback-danger"
+          icon={metricCardConfig[3].icon}
+          label={typeof metricCardConfig[3].label === "function" ? metricCardConfig[3].label(insights.highestExpenseMonth) : metricCardConfig[3].label}
+          bg={metricCardConfig[3].bg}
+          value={metricCardConfig[3].getValue(metricCardConfig[3].getValueArg(currentBalance, insights.averageMonthlyCashflow, insights.savingsRate, insights.highestExpenseMonth))}
+          valueColor={metricCardConfig[3].getValueColor()}
         />
       </div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Left — Cashflow Chart */}
         <div className="lg:col-span-2">
           <Card className="p-5">
             <div className="flex items-start justify-between mb-4">
@@ -161,7 +193,6 @@ export function AnalyticsPage() {
           </Card>
         </div>
 
-        {/* Right — Category Chart */}
         <div className="lg:col-span-1">
           <Card className="p-5">
             <p className="font-display font-bold text-lg leading-none mb-1">Distribusi Kategori</p>
@@ -177,7 +208,7 @@ export function AnalyticsPage() {
       <div>
         <div className="flex items-center gap-3 mb-4">
           <div className="h-px flex-1 bg-base-ink/10" />
-          <span className="font-body text-[11px] text-base-ink/30 uppercase tracking-widest font-semibold">
+          <span className="rounded-brutal bg-base-ink px-4 py-1.5 font-display font-bold text-[11px] text-accent-lime uppercase tracking-widest">
             Insight & Proyeksi
           </span>
           <div className="h-px flex-1 bg-base-ink/10" />
@@ -213,11 +244,13 @@ export function AnalyticsPage() {
 function MetricCard({
   icon: Icon,
   label,
+  bg,
   value,
   valueColor,
 }: {
   icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
   label: string;
+  bg: string;
   value: string;
   valueColor: string;
 }) {
@@ -228,11 +261,11 @@ function MetricCard({
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
       whileHover={{ x: -2, y: -2, boxShadow: "6px 6px 0px #000000" }}
       whileTap={{ x: 1, y: 1, boxShadow: "1px 1px 0px #000000" }}
-      className="rounded-brutal border-3 border-base-ink bg-base-surface shadow-brutal p-4"
+      className={cn("rounded-brutal border-3 border-base-ink shadow-brutal p-4", bg)}
     >
       <div className="flex items-center gap-2 mb-2">
-        <Icon size={14} strokeWidth={2.5} className="text-base-ink/30" />
-        <p className="font-body text-[11px] text-base-ink/40 uppercase tracking-wider truncate">
+        <Icon size={14} strokeWidth={2.5} className="text-base-ink/40" />
+        <p className="font-body text-[11px] text-base-ink/50 uppercase tracking-wider truncate">
           {label}
         </p>
       </div>
