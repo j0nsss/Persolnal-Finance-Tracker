@@ -9,7 +9,7 @@ interface TransactionFiltersProps {
 
 export function TransactionFilters({ activeFilters, onToggleFilter }: TransactionFiltersProps) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2" role="group" aria-label="Filter kategori">
       <Badge
         variant={activeFilters.length === 0 ? "accent" : "default"}
         onClick={() => {
@@ -18,6 +18,15 @@ export function TransactionFilters({ activeFilters, onToggleFilter }: Transactio
           }
         }}
         className="cursor-pointer select-none"
+        role="checkbox"
+        aria-checked={activeFilters.length === 0}
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            if (activeFilters.length > 0) onToggleFilter("" as CategoryId);
+          }
+        }}
       >
         Semua
       </Badge>
@@ -29,6 +38,16 @@ export function TransactionFilters({ activeFilters, onToggleFilter }: Transactio
             variant={isActive ? "accent" : "default"}
             onClick={() => onToggleFilter(cat.id)}
             className="cursor-pointer select-none"
+            role="checkbox"
+            aria-checked={isActive}
+            aria-label={`Filter ${cat.label}`}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onToggleFilter(cat.id);
+              }
+            }}
           >
             {cat.label}
           </Badge>

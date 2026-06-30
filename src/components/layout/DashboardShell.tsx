@@ -15,6 +15,13 @@ interface DashboardShellProps {
 export function DashboardShell({ onAddTransaction, children }: DashboardShellProps) {
   const { sidebarCollapsed, activeTab } = useUIStore();
   const isMobile = useMediaQuery("(max-width: 767px)");
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1024px)");
+
+  const sidebarOffset = () => {
+    if (isMobile) return "ml-0";
+    if (isTablet) return "ml-[72px]";
+    return sidebarCollapsed ? "ml-[72px]" : "ml-[240px]";
+  };
 
   return (
     <div className="min-h-screen bg-base-bg">
@@ -22,7 +29,7 @@ export function DashboardShell({ onAddTransaction, children }: DashboardShellPro
       <main
         className={cn(
           "transition-all duration-300 ease-in-out",
-          !isMobile && (sidebarCollapsed ? "ml-[72px]" : "ml-[240px]"),
+          sidebarOffset(),
           isMobile && "pb-20",
         )}
       >

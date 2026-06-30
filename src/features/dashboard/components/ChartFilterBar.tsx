@@ -26,7 +26,7 @@ export function ChartFilterBar({
 }: ChartFilterBarProps) {
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-      <div className="flex rounded-brutal border-3 border-base-ink overflow-hidden">
+      <div className="flex rounded-brutal border-3 border-base-ink overflow-hidden" role="group" aria-label="Periode grafik">
         {periodOptions.map((opt) => (
           <button
             key={opt}
@@ -38,13 +38,15 @@ export function ChartFilterBar({
                 ? "bg-base-ink text-base-surface"
                 : "bg-base-surface text-base-ink/60 hover:bg-base-ink/5",
             )}
+            aria-pressed={period === opt}
+            aria-label={`${opt} bulan`}
           >
             {opt}
           </button>
         ))}
       </div>
 
-      <div className="flex rounded-brutal border-3 border-base-ink overflow-hidden">
+      <div className="flex rounded-brutal border-3 border-base-ink overflow-hidden" role="group" aria-label="Tipe grafik">
         {chartTypeOptions.map((opt) => (
           <button
             key={opt.value}
@@ -60,6 +62,8 @@ export function ChartFilterBar({
                     : "bg-base-ink text-base-surface"
                 : "bg-base-surface text-base-ink/60 hover:bg-base-ink/5",
             )}
+            aria-pressed={chartType === opt.value}
+            aria-label={opt.label}
           >
             {opt.label}
           </button>

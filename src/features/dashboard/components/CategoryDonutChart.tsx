@@ -174,15 +174,18 @@ export function CategoryDonutChart({ transactions }: CategoryDonutChartProps) {
                   ? "border-base-ink/20 opacity-40"
                   : "border-base-ink hover:bg-base-ink/5"
               }`}
+              aria-pressed={!isHidden}
+              aria-label={`${slice.name}: ${formatCurrency(slice.value)}${isHidden ? " (tersembunyi)" : ""}`}
             >
               <span
                 className="w-3 h-3 rounded-brutal shrink-0"
                 style={{ backgroundColor: slice.color }}
+                aria-hidden="true"
               />
               <span className="flex-1 text-left font-display font-bold text-sm">
                 {slice.name}
               </span>
-              <span className="font-mono tabular-nums text-xs font-bold">
+              <span className="font-mono tabular-nums text-xs font-bold" aria-hidden="true">
                 {formatCurrency(slice.value)}
               </span>
             </button>

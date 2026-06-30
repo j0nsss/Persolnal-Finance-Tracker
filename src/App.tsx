@@ -1,13 +1,19 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, lazy, Suspense } from "react";
+import { MotionConfig } from "framer-motion";
 import { ThemeProvider } from "./context/ThemeProvider";
 import { DashboardShell } from "./components/layout/DashboardShell";
 import { DashboardOverview } from "./features/dashboard/components/DashboardOverview";
 import { TransactionLedger } from "./features/transactions/components/TransactionLedger";
-import { AnalyticsView } from "./features/analytics/components/AnalyticsView";
 import { TransactionFormModal } from "./features/transactions/forms/TransactionFormModal";
 import { useTransactionActions } from "./features/transactions/hooks/useTransactionActions";
 import { StyleGuide } from "./pages/dev/StyleGuide";
 import { useUIStore } from "./store/useUIStore";
+
+const AnalyticsView = lazy(() =>
+  import("./features/analytics/components/AnalyticsView").then((m) => ({
+    default: m.AnalyticsView,
+  })),
+);
 
 function DashboardContent() {
   const { activeTab } = useUIStore();
@@ -25,7 +31,11 @@ function DashboardContent() {
       case "transactions":
         return <TransactionLedger />;
       case "analytics":
-        return <AnalyticsView />;
+        return (
+          <Suspense fallback={<div className="h-64 flex items-center justify-center"><p className="font-display font-bold text-base-ink/40">Memuat...</p></div>}>
+            <AnalyticsView />
+          </Suspense>
+        );
       default:
         return <DashboardOverview />;
     }
@@ -55,14 +65,18 @@ function App() {
   if (isStyleGuide) {
     return (
       <ThemeProvider>
-        <StyleGuide />
+        <MotionConfig reducedMotion="user">
+          <StyleGuide />
+        </MotionConfig>
       </ThemeProvider>
     );
   }
 
   return (
     <ThemeProvider>
-      <DashboardContent />
+      <MotionConfig reducedMotion="user">
+        <DashboardContent />
+      </MotionConfig>
     </ThemeProvider>
   );
 }

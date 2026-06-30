@@ -36,14 +36,16 @@ export function SummaryCard({
         "relative rounded-brutal border-3 border-base-ink bg-base-surface p-5 overflow-hidden",
         accentClass,
       )}
+      role="region"
+      aria-label={`${title}: ${amount.toLocaleString("id-ID")} rupiah`}
     >
-      <div className="absolute top-3 right-3 text-base-ink/20">
+      <div className="absolute top-3 right-3 text-base-ink/20" aria-hidden="true">
         {icon}
       </div>
       <p className="font-display font-bold text-sm text-base-ink/60 uppercase tracking-wider">
         {title}
       </p>
-      <p className="font-mono tabular-nums text-2xl font-bold mt-2">
+      <p className="font-mono tabular-nums text-2xl font-bold mt-2" aria-live="polite" aria-atomic="true">
         <CountUpNumber target={amount} prefix="Rp" />
       </p>
       <div className="flex items-center gap-2 mt-1">
@@ -53,6 +55,7 @@ export function SummaryCard({
             className={`font-display font-bold text-xs ${
               trend.isPositive ? "text-feedback-success" : "text-feedback-danger"
             }`}
+            aria-label={`${trend.isPositive ? "Naik" : "Turun"} ${Math.abs(trend.value)} persen dari bulan sebelumnya`}
           >
             {trend.isPositive ? "↑" : "↓"} {Math.abs(trend.value)}%
           </span>

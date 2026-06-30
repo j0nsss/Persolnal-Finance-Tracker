@@ -27,6 +27,7 @@ export function Sidebar() {
         "fixed left-0 top-0 h-screen bg-base-surface border-r-3 border-base-ink z-40",
         "flex flex-col py-6 overflow-hidden",
       )}
+      aria-label="Navigasi utama"
     >
       <div className={cn("mb-8", isCollapsed ? "flex justify-center px-0" : "px-4")}>
         <h1 className="font-display font-bold text-xl tracking-tight">
@@ -34,7 +35,7 @@ export function Sidebar() {
         </h1>
       </div>
 
-      <nav className="flex-1 flex flex-col gap-1 px-2">
+      <nav className="flex-1 flex flex-col gap-1 px-2" aria-label="Tab dashboard">
         {navItems.map((item) => (
           <button
             key={item.id}
@@ -44,8 +45,10 @@ export function Sidebar() {
               "hover:bg-base-ink/5",
               activeTab === item.id && "bg-accent-lime",
             )}
+            aria-current={activeTab === item.id ? "page" : undefined}
+            aria-label={item.label}
           >
-            <span className="shrink-0 w-5 h-5 flex items-center justify-center">
+            <span className="shrink-0 w-5 h-5 flex items-center justify-center" aria-hidden="true">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 {item.icon === "LayoutDashboard" && <><rect width="18" height="15" x="3" y="4" rx="2" /><path d="M16 2v4M8 2v4" /><path d="M3 10h18" /></>}
                 {item.icon === "ArrowLeftRight" && <><path d="M8 3L4 7l4 4" /><path d="M16 3l4 4-4 4" /><path d="M4 7h16" /><path d="M4 17h16" /><path d="M8 21l-4-4 4-4" /><path d="M16 21l4-4-4-4" /></>}
@@ -69,12 +72,13 @@ export function Sidebar() {
           <button
             onClick={toggleSidebar}
             className="rounded-brutal border-3 border-base-ink p-2 hover:bg-base-ink/5 transition-colors"
-            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={isCollapsed ? "Perluas sidebar" : "Persempit sidebar"}
           >
             <motion.svg
               animate={{ rotate: isCollapsed ? 180 : 0 }}
               transition={{ duration: 0.2 }}
               width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+              aria-hidden="true"
             >
               <path d="M15 18l-6-6 6-6" />
             </motion.svg>
