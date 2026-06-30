@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useUIStore } from "../../store/useUIStore";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { cn } from "../../lib/utils";
 
 const navItems = [
@@ -9,20 +11,26 @@ const navItems = [
 ];
 
 export function Sidebar() {
-  const { sidebarCollapsed, activeTab, setActiveTab } = useUIStore();
+  const { sidebarCollapsed, toggleSidebar, activeTab, setActiveTab } = useUIStore();
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1024px)");
+  const [hovered, setHovered] = useState(false);
+
+  const isCollapsed = isTablet ? !hovered : sidebarCollapsed;
 
   return (
     <motion.aside
-      animate={{ width: sidebarCollapsed ? 72 : 240 }}
+      onMouseEnter={() => isTablet && setHovered(true)}
+      onMouseLeave={() => isTablet && setHovered(false)}
+      animate={{ width: isCollapsed ? 72 : 240 }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
       className={cn(
         "fixed left-0 top-0 h-screen bg-base-surface border-r-3 border-base-ink z-40",
         "flex flex-col py-6 overflow-hidden",
       )}
     >
-      <div className={cn("px-4 mb-8", sidebarCollapsed && "flex justify-center px-0")}>
+      <div className={cn("mb-8", isCollapsed ? "flex justify-center px-0" : "px-4")}>
         <h1 className="font-display font-bold text-xl tracking-tight">
-          {sidebarCollapsed ? "N" : "NeoFin"}
+          {isCollapsed ? "N" : "NeoFin"}
         </h1>
       </div>
 
@@ -44,7 +52,7 @@ export function Sidebar() {
                 {item.icon === "BarChart3" && <><path d="M3 3v18h18" /><path d="M7 16v-3" /><path d="M12 16v-7" /><path d="M17 16v-5" /></>}
               </svg>
             </span>
-            {!sidebarCollapsed && <span>{item.label}</span>}
+            {!isCollapsed && <span>{item.label}</span>}
             {activeTab === item.id && (
               <motion.div
                 layoutId="activeTabIndicator"
@@ -55,6 +63,24 @@ export function Sidebar() {
           </button>
         ))}
       </nav>
+
+      {!isTablet && (
+        <div className={cn("mt-auto pt-4", isCollapsed ? "flex justify-center" : "px-4")}>
+          <button
+            onClick={toggleSidebar}
+            className="rounded-brutal border-3 border-base-ink p-2 hover:bg-base-ink/5 transition-colors"
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <motion.svg
+              animate={{ rotate: isCollapsed ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+              width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </motion.svg>
+          </button>
+        </div>
+      )}
     </motion.aside>
   );
 }
