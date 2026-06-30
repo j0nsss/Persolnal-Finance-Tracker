@@ -12,3 +12,5 @@ export interface Transaction {
   createdAt: string;
   updatedAt: string;
 }
+
+export type NewTransactionInput = Omit<Transaction, "id" | "createdAt" | "updatedAt">;

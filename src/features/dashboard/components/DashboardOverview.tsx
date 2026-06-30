@@ -1,8 +1,19 @@
+import { useEffect } from "react";
 import { Card } from "../../../components/ui/Card/Card";
 import { Skeleton } from "../../../components/ui/Skeleton/Skeleton";
+import { useTransactionStore } from "../../../store/useTransactionStore";
+import { useDashboardSummary } from "../hooks/useDashboardSummary";
+import { SummaryCardGroup } from "./SummaryCardGroup";
 
 export function DashboardOverview() {
-  const isLoading = false;
+  const isLoading = useTransactionStore((s) => s.isLoading);
+  const fetchAll = useTransactionStore((s) => s.fetchAll);
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
+
+  const summary = useDashboardSummary();
 
   if (isLoading) {
     return (
@@ -20,23 +31,7 @@ export function DashboardOverview() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-5">
-          <p className="font-display font-bold text-sm text-base-ink/60 uppercase tracking-wider">Pemasukan</p>
-          <p className="font-mono tabular-nums text-2xl font-bold mt-2">Rp 0</p>
-          <p className="font-body text-xs mt-1 text-base-ink/40">Bulan Ini</p>
-        </Card>
-        <Card className="p-5">
-          <p className="font-display font-bold text-sm text-base-ink/60 uppercase tracking-wider">Pengeluaran</p>
-          <p className="font-mono tabular-nums text-2xl font-bold mt-2">Rp 0</p>
-          <p className="font-body text-xs mt-1 text-base-ink/40">Bulan Ini</p>
-        </Card>
-        <Card className="p-5 border-accent-lime">
-          <p className="font-display font-bold text-sm text-base-ink/60 uppercase tracking-wider">Saldo Bersih</p>
-          <p className="font-mono tabular-nums text-2xl font-bold mt-2">Rp 0</p>
-          <p className="font-body text-xs mt-1 text-base-ink/40">Bulan Ini</p>
-        </Card>
-      </div>
+      <SummaryCardGroup data={summary} period={summary.period} />
 
       <Card className="p-5">
         <p className="font-display font-bold text-lg mb-4">Pengeluaran Bulanan</p>

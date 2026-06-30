@@ -4,14 +4,18 @@ import { DashboardShell } from "./components/layout/DashboardShell";
 import { DashboardOverview } from "./features/dashboard/components/DashboardOverview";
 import { TransactionLedger } from "./features/transactions/components/TransactionLedger";
 import { AnalyticsView } from "./features/analytics/components/AnalyticsView";
+import { TransactionFormModal } from "./features/transactions/forms/TransactionFormModal";
+import { useTransactionActions } from "./features/transactions/hooks/useTransactionActions";
 import { StyleGuide } from "./pages/dev/StyleGuide";
 import { useUIStore } from "./store/useUIStore";
 
 function DashboardContent() {
   const { activeTab } = useUIStore();
+  const [showAddModal, setShowAddModal] = useState(false);
+  const { handleAdd } = useTransactionActions();
 
   const handleAddTransaction = useCallback(() => {
-    // will connect to modal in Fase 3
+    setShowAddModal(true);
   }, []);
 
   const renderTab = () => {
@@ -28,9 +32,16 @@ function DashboardContent() {
   };
 
   return (
-    <DashboardShell onAddTransaction={handleAddTransaction}>
-      {renderTab()}
-    </DashboardShell>
+    <>
+      <DashboardShell onAddTransaction={handleAddTransaction}>
+        {renderTab()}
+      </DashboardShell>
+      <TransactionFormModal
+        open={showAddModal}
+        onOpenChange={setShowAddModal}
+        onSubmit={handleAdd}
+      />
+    </>
   );
 }
 
