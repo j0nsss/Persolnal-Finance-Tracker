@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { PiggyBank } from "lucide-react";
+import { PiggyBank, TrendingUp, TrendingDown } from "lucide-react";
 import { useCountUp } from "../../../hooks/useCountUp";
+import { cn } from "../../../lib/utils";
 
 interface SavingsRateCardProps {
   savingsRate: number;
@@ -9,51 +10,56 @@ interface SavingsRateCardProps {
 }
 
 export function SavingsRateCard({ savingsRate, totalIncome, totalExpense }: SavingsRateCardProps) {
-  const animatedRate = useCountUp(savingsRate, 1);
+  const animatedRate = useCountUp(Math.max(0, savingsRate), 1.2);
+  const netCashflow = totalIncome - totalExpense;
 
-  const rateColor =
-    savingsRate >= 30
-      ? "bg-feedback-success"
-      : savingsRate >= 15
-        ? "bg-accent-orange"
-        : savingsRate >= 0
-          ? "bg-feedback-danger"
-          : "bg-base-ink";
+  const fillColor = "bg-accent-blue";
 
   return (
-    <div className="rounded-brutal border-3 border-base-ink bg-base-surface p-5">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="rounded-brutal border-3 border-base-ink bg-accent-lime p-2">
-          <PiggyBank size={20} strokeWidth={2.5} />
-        </div>
-        <div>
-          <p className="font-display font-bold text-sm">Rasio Tabungan</p>
-          <p className="font-body text-[11px] text-base-ink/50">{(totalIncome - totalExpense) >= 0 ? "Positif" : "Defisit"}</p>
+    <div className="rounded-brutal border-3 border-base-ink bg-base-surface shadow-brutal p-5 flex flex-col gap-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="rounded-brutal border-2 border-base-ink bg-base-ink/5 p-2">
+            <PiggyBank size={18} strokeWidth={2.5} />
+          </div>
+          <div>
+            <p className="font-display font-bold text-sm leading-none">Rasio Tabungan</p>
+            <p className="font-body text-[11px] text-base-ink/40 mt-0.5">
+              {netCashflow >= 0 ? "Positif" : "Defisit"}
+            </p>
+          </div>
         </div>
       </div>
 
-      <p className="font-mono tabular-nums text-3xl font-bold mb-3">
-        {animatedRate}<span className="text-base-ink/40">%</span>
+      <p className="font-mono tracking-tight tabular-nums text-3xl font-bold">
+        {animatedRate}<span className="text-base-ink/30">%</span>
       </p>
 
-      <div className="w-full h-4 rounded-brutal border-2 border-base-ink bg-base-bg overflow-hidden">
+      <div className="w-full h-3 rounded-sm border-2 border-base-ink bg-base-bg overflow-hidden">
         <motion.div
-          className={`h-full ${rateColor}`}
+          className={cn("h-full rounded-sm transition-colors", fillColor)}
           initial={{ width: "0%" }}
-          animate={{ width: `${Math.max(0, Math.min(100, savingsRate))}%` }}
+          animate={{ width: `${Math.min(100, Math.max(0, savingsRate))}%` }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         />
       </div>
 
-      <p className="font-body text-[11px] text-base-ink/40 mt-2">
-        {savingsRate >= 30
-          ? "Kebiasaan menabung yang luar biasa!"
-          : savingsRate >= 15
-            ? "Cukup baik, bisa ditingkatkan lagi."
-            : savingsRate >= 0
-              ? "Mulai sisihkan lebih banyak untuk tabungan."
-              : "Pengeluaran melebihi pemasukan. Evaluasi kembali!"}
-      </p>
+      <div className="flex items-center gap-1.5 text-[11px]">
+        {netCashflow >= 0 ? (
+          <TrendingUp size={12} strokeWidth={2.5} className="text-feedback-success shrink-0" />
+        ) : (
+          <TrendingDown size={12} strokeWidth={2.5} className="text-feedback-danger shrink-0" />
+        )}
+        <span className="font-body text-base-ink/50">
+          {savingsRate >= 25
+            ? "Kebiasaan menabung yang luar biasa!"
+            : savingsRate >= 10
+              ? "Cukup baik, tingkatkan lagi."
+              : savingsRate >= 0
+                ? "Mulai sisihkan lebih banyak."
+                : "Pengeluaran melebihi pemasukan."}
+        </span>
+      </div>
     </div>
   );
 }

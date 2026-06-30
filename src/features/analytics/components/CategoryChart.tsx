@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import {
   PieChart,
   Pie,
@@ -13,76 +13,64 @@ interface CategoryChartProps {
   data: CategoryBreakdownItem[];
 }
 
+const SLICE_COLORS = ["#00C9D4", "#3F8EFF", "#FF3F8E", "#FF6B1A", "#D4FF3F"];
+
 export function CategoryChart({ data }: CategoryChartProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
   const [legendHoveredIndex, setLegendHoveredIndex] = useState<number | null>(null);
 
-  const visibleData = useMemo(
-    () => data.filter((d) => !hiddenIds.has(d.categoryId)),
-    [data, hiddenIds],
-  );
-
   const activeIndex = hoveredIndex ?? legendHoveredIndex;
-  const activeSlice = activeIndex != null ? visibleData[activeIndex] ?? null : null;
+  const activeSlice = activeIndex != null ? data[activeIndex] ?? null : null;
 
   const totalExpense = useMemo(
-    () => visibleData.reduce((s, d) => s + d.total, 0),
-    [visibleData],
+    () => data.reduce((s, d) => s + d.total, 0),
+    [data],
   );
 
   const centerLabel = activeSlice
-    ? { title: activeSlice.label, value: `${activeSlice.percentage}%` }
-    : { title: "Total", value: formatCurrency(totalExpense) };
-
-  const toggleVisibility = useCallback((id: string) => {
-    setHiddenIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }, []);
+    ? { title: activeSlice.label, subtitle: `${activeSlice.percentage}%` }
+    : { title: "TOTAL", subtitle: formatCurrency(totalExpense) };
 
   if (data.length === 0) {
     return (
-      <div className="h-72 flex items-center justify-center border-3 border-dashed border-base-ink/20 rounded-brutal">
-        <p className="font-body text-base-ink/40">Belum ada data pengeluaran</p>
+      <div className="h-72 flex items-center justify-center border-2 border-dashed border-base-ink/20 rounded-brutal">
+        <p className="font-body text-base-ink/40">Belum ada data</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-5">
       <div className="relative">
-        <ResponsiveContainer width={200} height={200}>
+        <ResponsiveContainer width={220} height={220}>
           <PieChart>
             <Pie
-              data={visibleData.map((d) => ({ ...d, value: d.total || 0.001 }))}
+              data={data.map((d) => ({ ...d, value: d.total || 0.001 }))}
               cx="50%"
               cy="50%"
-              innerRadius={55}
-              outerRadius={80}
-              paddingAngle={2}
+              innerRadius={70}
+              outerRadius={95}
+              paddingAngle={3}
               dataKey="value"
               isAnimationActive={true}
-              animationDuration={400}
+              animationDuration={500}
+              animationEasing="ease-in-out"
               activeIndex={activeIndex != null ? activeIndex : undefined}
               activeShape={(props: unknown) => {
                 const p = props as { cx: number; cy: number; innerRadius: number; outerRadius: number; startAngle: number; endAngle: number; fill: string };
                 return (
                   <g>
                     <path
-                      d={describeArc(p.cx, p.cy, p.outerRadius + 8, p.startAngle, p.endAngle)}
+                      d={describeArc(p.cx, p.cy, p.outerRadius + 6, p.startAngle, p.endAngle)}
                       fill={p.fill}
                       stroke="#000"
-                      strokeWidth={2}
+                      strokeWidth={1.5}
                     />
                     <path
                       d={describeArc(p.cx, p.cy, p.innerRadius, p.startAngle, p.endAngle)}
                       fill={p.fill}
                       stroke="#000"
-                      strokeWidth={2}
+                      strokeWidth={1.5}
                     />
                   </g>
                 );
@@ -90,17 +78,17 @@ export function CategoryChart({ data }: CategoryChartProps) {
               onMouseEnter={(_, index) => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              {visibleData.map((entry, index) => (
+              {data.map((entry, index) => (
                 <Cell
                   key={entry.categoryId}
-                  fill={entry.color}
+                  fill={SLICE_COLORS[index % SLICE_COLORS.length]}
                   stroke="#000"
-                  strokeWidth={2}
+                  strokeWidth={1.5}
                   opacity={
                     hoveredIndex != null || legendHoveredIndex != null
                       ? index === hoveredIndex || index === legendHoveredIndex
                         ? 1
-                        : 0.4
+                        : 0.3
                       : 1
                   }
                 />
@@ -108,48 +96,46 @@ export function CategoryChart({ data }: CategoryChartProps) {
             </Pie>
           </PieChart>
         </ResponsiveContainer>
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <p className="font-display font-bold text-[10px] text-base-ink/50 uppercase tracking-wider">
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none px-2">
+          <p className="font-display font-bold text-[10px] text-base-ink/40 uppercase tracking-widest">
             {centerLabel.title}
           </p>
-          <p className="font-mono tabular-nums text-sm font-bold mt-0.5">
-            {centerLabel.value}
+          <p className="font-mono tracking-tight tabular-nums text-lg font-bold mt-0.5 leading-tight text-center break-words max-w-full">
+            {centerLabel.subtitle}
           </p>
         </div>
       </div>
 
-      <div className="w-full space-y-1.5" role="group" aria-label="Legenda kategori">
+      <div
+        className="w-full grid grid-cols-2 gap-x-2 gap-y-1"
+        role="group"
+        aria-label="Legenda kategori"
+      >
         {data.map((item, index) => {
-          const isHidden = hiddenIds.has(item.categoryId);
           const isHovered = legendHoveredIndex === index || hoveredIndex === index;
+          const sliceColor = SLICE_COLORS[index % SLICE_COLORS.length];
 
           return (
             <button
               key={item.categoryId}
               type="button"
-              onClick={() => toggleVisibility(item.categoryId)}
               onMouseEnter={() => setLegendHoveredIndex(index)}
               onMouseLeave={() => setLegendHoveredIndex(null)}
               className={cn(
-                "w-full flex items-center gap-2.5 px-3 py-2 rounded-brutal border-2 transition-all text-left",
-                isHidden
-                  ? "border-base-ink/20 opacity-40"
-                  : isHovered
-                    ? "border-base-ink bg-base-ink/5"
-                    : "border-transparent hover:border-base-ink/40",
+                "flex items-center gap-2 px-2.5 py-2 rounded-brutal border-2 transition-all text-left",
+                isHovered
+                  ? "border-base-ink bg-base-ink/5"
+                  : "border-transparent hover:border-base-ink/30",
               )}
-              aria-pressed={!isHidden}
-              aria-label={`${item.label}: ${item.percentage}% (${formatCurrency(item.total)})${isHidden ? " — tersembunyi" : ""}`}
             >
               <span
-                className="w-3 h-3 rounded-brutal shrink-0"
-                style={{ backgroundColor: item.color }}
-                aria-hidden="true"
+                className="w-2.5 h-2.5 rounded-sm shrink-0"
+                style={{ backgroundColor: sliceColor }}
               />
-              <span className="flex-1 font-display font-bold text-xs truncate">
+              <span className="flex-1 font-display font-semibold text-[11px] text-base-ink/80 truncate leading-tight">
                 {item.label}
               </span>
-              <span className="font-mono tabular-nums text-[11px] font-bold text-base-ink/60">
+              <span className="font-mono tracking-tight tabular-nums text-[10px] font-bold text-base-ink/50">
                 {item.percentage}%
               </span>
             </button>

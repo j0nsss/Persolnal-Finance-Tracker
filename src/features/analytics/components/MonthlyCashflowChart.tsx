@@ -1,12 +1,12 @@
+import { useId } from "react";
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
-  type BarProps,
 } from "recharts";
 import type { MonthlyCashflowItem } from "../hooks/useAnalyticsData";
 import { formatCurrency } from "../../../lib/utils";
@@ -15,28 +15,11 @@ interface MonthlyCashflowChartProps {
   data: MonthlyCashflowItem[];
 }
 
-function CustomBarShape(props: BarProps) {
-  const { x, y, width, height, fill } = props;
-  if (x == null || y == null || width == null || height == null) return null;
-  return (
-    <rect
-      x={x}
-      y={y}
-      width={width}
-      height={height}
-      fill={fill}
-      stroke="#000"
-      strokeWidth={2}
-      rx={2}
-      ry={2}
-    />
-  );
-}
-
 interface TooltipPayloadEntry {
   name: string;
   value: number;
   fill: string;
+  dataKey: string;
 }
 
 interface CustomTooltipProps {
@@ -47,48 +30,86 @@ interface CustomTooltipProps {
 
 function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
+
+  const incomeEntry = payload.find((p) => p.dataKey === "income");
+  const expenseEntry = payload.find((p) => p.dataKey === "expense");
+  const income = incomeEntry?.value ?? 0;
+  const expense = expenseEntry?.value ?? 0;
+  const net = income - expense;
+
   return (
-    <div className="rounded-brutal border-3 border-base-ink bg-base-surface shadow-brutal-sm px-4 py-3">
-      <p className="font-display font-bold text-sm mb-2">{label}</p>
-      {payload.map((entry) => (
-        <div key={entry.name} className="flex items-center gap-2 text-sm">
-          <span
-            className="w-2.5 h-2.5 rounded-brutal shrink-0"
-            style={{ backgroundColor: entry.fill }}
-          />
-          <span className="font-body text-base-ink/60">{entry.name}:</span>
-          <span className="font-mono tabular-nums font-bold">
-            {formatCurrency(entry.value)}
+    <div className="rounded-brutal border-3 border-base-ink bg-base-surface shadow-brutal px-4 py-3 min-w-[180px]">
+      <p className="font-display font-bold text-sm mb-2 border-b-2 border-base-ink/10 pb-1.5">
+        {label}
+      </p>
+      {incomeEntry && (
+        <div className="flex items-center gap-2 text-sm">
+          <span className="w-2.5 h-2.5 rounded-sm shrink-0 bg-cyan-400" />
+          <span className="font-body text-base-ink/60">Pemasukan:</span>
+          <span className="font-mono tracking-tight tabular-nums font-bold ml-auto text-feedback-success">
+            {formatCurrency(incomeEntry.value)}
           </span>
         </div>
-      ))}
+      )}
+      {expenseEntry && (
+        <div className="flex items-center gap-2 text-sm mt-1">
+          <span className="w-2.5 h-2.5 rounded-sm shrink-0 bg-accent-pink" />
+          <span className="font-body text-base-ink/60">Pengeluaran:</span>
+          <span className="font-mono tracking-tight tabular-nums font-bold ml-auto text-feedback-danger">
+            {formatCurrency(expenseEntry.value)}
+          </span>
+        </div>
+      )}
+      <div className="flex items-center gap-2 text-sm mt-1.5 pt-1.5 border-t-2 border-base-ink/10">
+        <span className="font-body text-base-ink/60">Net:</span>
+        <span
+          className={`font-mono tracking-tight tabular-nums font-bold ml-auto ${net > 0 ? "text-feedback-success" : net < 0 ? "text-feedback-danger" : "text-base-ink/50"}`}
+        >
+          {formatCurrency(net)}
+        </span>
+      </div>
     </div>
   );
 }
 
 export function MonthlyCashflowChart({ data }: MonthlyCashflowChartProps) {
+  const gradientId = useId();
+
   if (data.length === 0) {
     return (
-      <div className="h-72 flex items-center justify-center border-3 border-dashed border-base-ink/20 rounded-brutal">
+      <div className="h-72 flex items-center justify-center border-2 border-dashed border-base-ink/20 rounded-brutal">
         <p className="font-body text-base-ink/40">Belum ada data</p>
       </div>
     );
   }
 
+  const maxVal = Math.max(...data.flatMap((d) => [d.income, d.expense]), 1);
+
   return (
     <div className="h-72">
+      <svg width={0} height={0} className="absolute">
+        <defs>
+          <linearGradient id={`${gradientId}-income`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#00C9D4" stopOpacity={0.3} />
+            <stop offset="100%" stopColor="#00C9D4" stopOpacity={0.0} />
+          </linearGradient>
+          <linearGradient id={`${gradientId}-expense`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#FF3F8E" stopOpacity={0.3} />
+            <stop offset="100%" stopColor="#FF3F8E" stopOpacity={0.0} />
+          </linearGradient>
+        </defs>
+      </svg>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart
+        <AreaChart
           data={data}
           margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
-          barGap={4}
-          barCategoryGap="20%"
         >
           <CartesianGrid
-            strokeDasharray="4 4"
+            strokeDasharray="3 3"
             stroke="#000"
-            strokeOpacity={0.1}
+            strokeOpacity={0.07}
             vertical={false}
+            horizontal={true}
           />
           <XAxis
             dataKey="label"
@@ -97,6 +118,7 @@ export function MonthlyCashflowChart({ data }: MonthlyCashflowChartProps) {
             axisLine={{ stroke: "#000", strokeWidth: 2 }}
           />
           <YAxis
+            domain={[0, maxVal * 1.15]}
             tick={{ fontFamily: "JetBrains Mono, monospace", fontSize: 11, fill: "#000" }}
             tickLine={false}
             axisLine={{ stroke: "#000", strokeWidth: 2 }}
@@ -108,24 +130,37 @@ export function MonthlyCashflowChart({ data }: MonthlyCashflowChartProps) {
                   : `${v}`
             }
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(0,0,0,0.05)" }} />
-          <Bar
+          <Tooltip
+            content={<CustomTooltip />}
+            cursor={{ stroke: "#000", strokeWidth: 1, strokeDasharray: "4 4", opacity: 0.15 }}
+          />
+          <Area
+            type="monotone"
             dataKey="expense"
             name="Pengeluaran"
-            fill="#FF3F8E"
-            shape={(props: BarProps) => <CustomBarShape {...props} />}
+            stroke="#000"
+            strokeWidth={2}
+            fill={`url(#${gradientId}-expense)`}
+            dot={{ r: 3, fill: "#FF3F8E", stroke: "#000", strokeWidth: 2 }}
+            activeDot={{ r: 5, fill: "#FF3F8E", stroke: "#000", strokeWidth: 2 }}
             isAnimationActive={true}
-            animationDuration={400}
+            animationDuration={600}
+            animationEasing="ease-in-out"
           />
-          <Bar
+          <Area
+            type="monotone"
             dataKey="income"
             name="Pemasukan"
-            fill="#D4FF3F"
-            shape={(props: BarProps) => <CustomBarShape {...props} />}
+            stroke="#000"
+            strokeWidth={2}
+            fill={`url(#${gradientId}-income)`}
+            dot={{ r: 3, fill: "#00C9D4", stroke: "#000", strokeWidth: 2 }}
+            activeDot={{ r: 5, fill: "#00C9D4", stroke: "#000", strokeWidth: 2 }}
             isAnimationActive={true}
-            animationDuration={400}
+            animationDuration={600}
+            animationEasing="ease-in-out"
           />
-        </BarChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );
