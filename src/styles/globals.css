@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "Space Grotesk";
+    src: url("/fonts/SpaceGrotesk-Variable.woff2") format("woff2");
+    font-weight: 400 700;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "JetBrains Mono";
+    src: url("/fonts/JetBrainsMono-Variable.woff2") format("woff2");
+    font-weight: 400 700;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Inter";
+    src: url("/fonts/Inter-Variable.woff2") format("woff2");
+    font-weight: 400 700;
+    font-display: swap;
+  }
+
+  html {
+    font-family: "Inter", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-base-bg text-base-ink;
+  }
+}

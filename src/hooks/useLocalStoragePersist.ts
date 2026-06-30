@@ -1,0 +1,26 @@
+import { useCallback, useEffect, useState } from "react";
+
+export function useLocalStoragePersist<T>(key: string, initialValue: T) {
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? (JSON.parse(item) as T) : initialValue;
+    } catch {
+      return initialValue;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(storedValue));
+    } catch {
+      // storage full or unavailable
+    }
+  }, [key, storedValue]);
+
+  const setValue = useCallback((value: T | ((prev: T) => T)) => {
+    setStoredValue((prev) => (value instanceof Function ? value(prev) : value));
+  }, []);
+
+  return [storedValue, setValue] as const;
+}
