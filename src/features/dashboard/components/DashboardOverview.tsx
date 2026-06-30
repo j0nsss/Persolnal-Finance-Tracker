@@ -8,6 +8,7 @@ import { SummaryCardGroup } from "./SummaryCardGroup";
 import { ChartFilterBar, type PeriodFilter, type ChartTypeFilter } from "./ChartFilterBar";
 import { MonthlyBarChart } from "./MonthlyBarChart";
 import { CategoryDonutChart } from "./CategoryDonutChart";
+import { DinoRun } from "./DinoRun";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -139,6 +140,20 @@ export function DashboardOverview() {
           </div>
           <CategoryDonutChart transactions={transactions} />
         </Card>
+      </motion.div>
+
+      <motion.div
+        variants={{
+          hidden: { opacity: 0, y: 16 },
+          show: { opacity: 1, y: 0 },
+        }}
+      >
+        <div className="relative">
+          <p className="font-display font-bold text-xs text-base-ink/30 uppercase tracking-widest mb-1">
+            Dino Runner
+          </p>
+          <DinoRun />
+        </div>
       </motion.div>
     </motion.div>
   );

@@ -77,8 +77,8 @@ export function SummaryCardGroup({ data, period }: SummaryCardGroupProps) {
           title="Saldo Bersih"
           amount={data.balance}
           period={period}
-          icon={<Wallet size={32} strokeWidth={1.5} />}
-          accentClass="border-base-ink bg-base-ink text-white [&_.countup]:text-white [&_svg]:text-white/30"
+          icon={<Wallet size={32} strokeWidth={1.5} className="text-accent-blue/20" />}
+          accentClass="border-accent-blue"
         />
       </motion.div>
     </div>
