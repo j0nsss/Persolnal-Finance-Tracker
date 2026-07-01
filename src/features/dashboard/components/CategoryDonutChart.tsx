@@ -1,12 +1,12 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import {
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
-  Tooltip,
 } from "recharts";
 import { motion } from "framer-motion";
+import { UtensilsCrossed, Car, Home, Gamepad2, HeartPulse, ShoppingBag, Briefcase, TrendingUp, Ellipsis, type LucideIcon } from "lucide-react";
 import type { Transaction } from "../../../types/transaction";
 import { CATEGORY_LIST } from "../../../lib/constants";
 import type { CategoryId } from "../../../types/category";
@@ -22,38 +22,22 @@ interface DonutSlice {
   value: number;
   color: string;
   categoryId: string;
+  percentage: number;
 }
+
+const iconMap: Record<string, LucideIcon> = {
+  UtensilsCrossed,
+  Car,
+  Home,
+  Gamepad2,
+  HeartPulse,
+  ShoppingBag,
+  Briefcase,
+  TrendingUp,
+  Ellipsis,
+};
 
 const categoryMap = new Map(CATEGORY_LIST.map((c) => [c.id, c]));
-
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: { name: string; value: number; payload: DonutSlice }[];
-}
-
-function CustomTooltip({ active, payload }: CustomTooltipProps) {
-  if (!active || !payload || payload.length === 0) return null;
-  const data = payload[0].payload;
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 6, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.12 }}
-      className="rounded-brutal border-3 border-base-ink bg-base-surface shadow-brutal-sm px-4 py-3"
-    >
-      <div className="flex items-center gap-2 mb-1">
-        <span
-          className="w-3 h-3 rounded-brutal shrink-0"
-          style={{ backgroundColor: data.color }}
-        />
-        <p className="font-display font-bold text-sm">{data.name}</p>
-      </div>
-      <p className="font-mono tabular-nums text-sm font-bold">
-        {formatCurrency(data.value)}
-      </p>
-    </motion.div>
-  );
-}
 
 function CenterLabel({ total, activeSlice }: { total: number; activeSlice: DonutSlice | null }) {
   const displayValue = activeSlice ? activeSlice.value : total;
@@ -67,7 +51,7 @@ function CenterLabel({ total, activeSlice }: { total: number; activeSlice: Donut
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.15 }}
-        className="font-display font-bold text-xs uppercase tracking-wider"
+        className="font-display font-bold text-[10px] uppercase tracking-widest"
         style={{ color: displayColor ?? "rgba(0,0,0,0.4)" }}
       >
         {displayTitle}
@@ -77,7 +61,7 @@ function CenterLabel({ total, activeSlice }: { total: number; activeSlice: Donut
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2 }}
-        className="font-mono tabular-nums text-lg font-bold mt-0.5"
+        className="font-mono tabular-nums text-base font-bold mt-0.5"
       >
         <CountUpLabel target={displayValue} />
       </motion.p>
@@ -90,46 +74,13 @@ function CountUpLabel({ target }: { target: number }) {
   return <>{formatCurrency(value)}</>;
 }
 
-function LegendItem({
-  slice,
-  isHidden,
-  onClick,
-}: {
-  slice: DonutSlice;
-  isHidden: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      whileTap={{ scale: 0.97 }}
-      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-brutal border-2 transition-all ${
-        isHidden
-          ? "border-base-ink/20 opacity-40"
-          : "border-base-ink hover:bg-base-ink/5 hover:border-accent-orange"
-      }`}
-      aria-pressed={!isHidden}
-      aria-label={`${slice.name}: ${formatCurrency(slice.value)}${isHidden ? " (tersembunyi)" : ""}`}
-    >
-      <span
-        className="w-3 h-3 rounded-brutal shrink-0"
-        style={{ backgroundColor: slice.color }}
-        aria-hidden="true"
-      />
-      <span className="flex-1 text-left font-display font-bold text-sm">
-        {slice.name}
-      </span>
-      <span className="font-mono tabular-nums text-xs font-bold" aria-hidden="true">
-        {formatCurrency(slice.value)}
-      </span>
-    </motion.button>
-  );
-}
-
 export function CategoryDonutChart({ transactions }: CategoryDonutChartProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
+
+  const totalExpense = useMemo(
+    () => transactions.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0),
+    [transactions],
+  );
 
   const slices = useMemo(() => {
     const expenseTxs = transactions.filter((t) => t.type === "expense");
@@ -147,36 +98,15 @@ export function CategoryDonutChart({ transactions }: CategoryDonutChartProps) {
           value,
           color: cat.color,
           categoryId: id,
+          percentage: totalExpense > 0 ? Math.round((value / totalExpense) * 100) : 0,
         });
       }
     }
     result.sort((a, b) => b.value - a.value);
     return result;
-  }, [transactions]);
+  }, [transactions, totalExpense]);
 
-  const visibleSlices = useMemo(
-    () => slices.filter((s) => !hiddenCategories.has(s.categoryId)),
-    [slices, hiddenCategories],
-  );
-
-  const total = useMemo(
-    () => visibleSlices.reduce((sum, s) => sum + s.value, 0),
-    [visibleSlices],
-  );
-
-  const activeSlice = activeIndex !== null && visibleSlices[activeIndex] ? visibleSlices[activeIndex] : null;
-
-  const toggleCategory = useCallback((categoryId: string) => {
-    setHiddenCategories((prev) => {
-      const next = new Set(prev);
-      if (next.has(categoryId)) {
-        next.delete(categoryId);
-      } else {
-        next.add(categoryId);
-      }
-      return next;
-    });
-  }, []);
+  const activeSlice = activeIndex !== null && slices[activeIndex] ? slices[activeIndex] : null;
 
   if (slices.length === 0) {
     return (
@@ -195,18 +125,15 @@ export function CategoryDonutChart({ transactions }: CategoryDonutChartProps) {
   return (
     <div className="flex flex-col md:flex-row items-center gap-6">
       <div className="relative shrink-0">
-        <ResponsiveContainer width={240} height={240}>
+        <ResponsiveContainer width={200} height={200}>
           <PieChart>
             <Pie
-              data={visibleSlices.map((s) => ({
-                ...s,
-                value: s.value || 0.001,
-              }))}
+              data={slices.map((s) => ({ ...s, value: s.value || 0.001 }))}
               cx="50%"
               cy="50%"
-              innerRadius={65}
-              outerRadius={activeIndex !== null ? 98 : 88}
-              paddingAngle={3}
+              innerRadius={60}
+              outerRadius={activeIndex !== null ? 90 : 82}
+              paddingAngle={4}
               dataKey="value"
               isAnimationActive={true}
               animationDuration={500}
@@ -214,7 +141,7 @@ export function CategoryDonutChart({ transactions }: CategoryDonutChartProps) {
               onMouseEnter={(_, index) => setActiveIndex(index)}
               onMouseLeave={() => setActiveIndex(null)}
             >
-              {visibleSlices.map((entry, index) => (
+              {slices.map((entry, index) => (
                 <Cell
                   key={entry.categoryId}
                   fill={entry.color}
@@ -224,21 +151,54 @@ export function CategoryDonutChart({ transactions }: CategoryDonutChartProps) {
                 />
               ))}
             </Pie>
-            <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
-        <CenterLabel total={total} activeSlice={activeSlice} />
+        <CenterLabel total={totalExpense} activeSlice={activeSlice} />
       </div>
 
-      <div className="flex-1 w-full space-y-1.5">
-        {slices.map((slice) => (
-          <LegendItem
-            key={slice.categoryId}
-            slice={slice}
-            isHidden={hiddenCategories.has(slice.categoryId)}
-            onClick={() => toggleCategory(slice.categoryId)}
-          />
-        ))}
+      <div className="flex-1 w-full grid grid-cols-2 gap-2">
+        {slices.map((slice, index) => {
+          const cat = categoryMap.get(slice.categoryId as CategoryId);
+          const IconComponent = cat ? iconMap[cat.icon] || Ellipsis : Ellipsis;
+          const isActive = activeIndex === index;
+
+          return (
+            <motion.div
+              key={slice.categoryId}
+              onMouseEnter={() => setActiveIndex(index)}
+              onMouseLeave={() => setActiveIndex(null)}
+              whileHover={{ scale: 1.02, translateY: -1 }}
+              className={`rounded-brutal border-3 border-base-ink bg-base-surface p-3 flex flex-col gap-1.5 cursor-pointer transition-shadow ${isActive ? "shadow-brutal" : "shadow-brutal-sm"}`}
+            >
+              <div className="flex items-center gap-2">
+                <div
+                  className="rounded-brutal border-2 border-base-ink p-1.5 shrink-0"
+                  style={{ backgroundColor: slice.color }}
+                >
+                  <IconComponent size={14} strokeWidth={2.5} className="text-white" />
+                </div>
+                <span className="font-display font-bold text-[11px] text-base-ink leading-tight truncate">
+                  {slice.name}
+                </span>
+              </div>
+              <span className="font-mono tracking-tight tabular-nums text-sm font-bold text-base-ink">
+                {formatCurrency(slice.value)}
+              </span>
+              <div className="w-full h-2 rounded-sm border border-base-ink bg-base-ink/10 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${slice.percentage}%` }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  className="h-full rounded-sm"
+                  style={{ backgroundColor: slice.color }}
+                />
+              </div>
+              <span className="font-mono text-[9px] text-base-ink/40 font-bold">
+                {slice.percentage}%
+              </span>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );
