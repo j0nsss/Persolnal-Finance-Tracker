@@ -12,6 +12,7 @@ import { useAuthStore } from "./store/useAuthStore";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { SettingsPage } from "./features/settings/components/SettingsPage";
 
 const AnalyticsView = lazy(() =>
   import("./features/analytics/components/AnalyticsView").then((m) => ({
@@ -40,6 +41,8 @@ function DashboardContent() {
             <AnalyticsView />
           </Suspense>
         );
+      case "settings":
+        return <SettingsPage />;
       default:
         return <DashboardOverview />;
     }

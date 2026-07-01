@@ -9,12 +9,14 @@ const tabLabels: Record<string, string> = {
   overview: "Overview",
   transactions: "Transaksi",
   analytics: "Analitik",
+  settings: "Pengaturan",
 };
 
 const navItems = [
   { id: "overview", label: "Overview" },
   { id: "transactions", label: "Transaksi" },
   { id: "analytics", label: "Analitik" },
+  { id: "settings", label: "Pengaturan" },
 ];
 
 interface TopbarProps {
