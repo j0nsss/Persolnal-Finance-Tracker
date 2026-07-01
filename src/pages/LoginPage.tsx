@@ -9,6 +9,52 @@ interface LoginPageProps {
   onNavigate: (page: "landing" | "register") => void;
 }
 
+const FAILED_ATTEMPT_KEY = "neofin_login_attempts";
+const MAX_ATTEMPTS = 5;
+const COOLDOWN_MS = 60_000;
+
+function getRemainingCooldown(): number {
+  try {
+    const raw = localStorage.getItem(FAILED_ATTEMPT_KEY);
+    if (!raw) return 0;
+    const { count, time } = JSON.parse(raw);
+    if (count >= MAX_ATTEMPTS) {
+      const elapsed = Date.now() - time;
+      if (elapsed < COOLDOWN_MS) return COOLDOWN_MS - elapsed;
+      localStorage.removeItem(FAILED_ATTEMPT_KEY);
+    }
+  } catch { /* ignore */ }
+  return 0;
+}
+
+function recordFailedAttempt() {
+  try {
+    const raw = localStorage.getItem(FAILED_ATTEMPT_KEY);
+    const entry = raw ? JSON.parse(raw) : { count: 0, time: Date.now() };
+    entry.count += 1;
+    entry.time = Date.now();
+    localStorage.setItem(FAILED_ATTEMPT_KEY, JSON.stringify(entry));
+  } catch { /* ignore */ }
+}
+
+function resetAttempts() {
+  localStorage.removeItem(FAILED_ATTEMPT_KEY);
+}
+
+function toGenericAuthError(err: unknown): string {
+  const msg = err instanceof Error ? err.message.toLowerCase() : "";
+  if (msg.includes("invalid login credentials") || msg.includes("invalid_credentials")) {
+    return "Email atau password salah";
+  }
+  if (msg.includes("email not confirmed") || msg.includes("email_not_confirmed")) {
+    return "Email belum dikonfirmasi. Cek email kamu";
+  }
+  if (msg.includes("rate limit") || msg.includes("rate_limit")) {
+    return "Terlalu banyak percobaan. Coba lagi nanti";
+  }
+  return "Login gagal, coba lagi";
+}
+
 export function LoginPage({ onNavigate }: LoginPageProps) {
   const login = useAuthStore((s) => s.login);
   const [email, setEmail] = useState("");
@@ -20,6 +66,12 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    const remaining = getRemainingCooldown();
+    if (remaining > 0) {
+      setError(`Terlalu banyak percobaan. Coba lagi ${Math.ceil(remaining / 1000)} detik`);
+      return;
+    }
 
     if (!email.trim()) {
       setError("Email harus diisi");
@@ -33,8 +85,10 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
     setLoading(true);
     try {
       await login(email, password);
+      resetAttempts();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login gagal, coba lagi");
+      recordFailedAttempt();
+      setError(toGenericAuthError(err));
     } finally {
       setLoading(false);
     }

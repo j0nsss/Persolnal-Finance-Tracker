@@ -25,6 +25,10 @@ function toTransaction(row: Record<string, unknown>): Transaction {
   };
 }
 
+function sanitize(input: string): string {
+  return input.replace(/<[^>]*>/g, "").replace(/[<>]/g, "");
+}
+
 function validatePayload(payload: {
   amount: number;
   type: string;
@@ -84,7 +88,7 @@ export const transactionApi = {
         amount: payload.amount,
         type: payload.type,
         category_id: payload.categoryId,
-        description: payload.description,
+        description: sanitize(payload.description ?? ""),
         date: payload.date,
       } as never)
       .select()
@@ -114,7 +118,8 @@ export const transactionApi = {
     if (payload.categoryId !== undefined && !VALID_CATEGORY_IDS.has(payload.categoryId)) {
       throw new Error("Kategori tidak valid");
     }
-    if ((payload.description ?? "").length > 500) {
+    const sanitizedDescription = payload.description !== undefined ? sanitize(payload.description) : undefined;
+    if ((sanitizedDescription ?? "").length > 500) {
       throw new Error("Deskripsi terlalu panjang (maks 500 karakter)");
     }
 
@@ -122,7 +127,7 @@ export const transactionApi = {
     if (payload.amount !== undefined) updates.amount = payload.amount;
     if (payload.type !== undefined) updates.type = payload.type;
     if (payload.categoryId !== undefined) updates.category_id = payload.categoryId;
-    if (payload.description !== undefined) updates.description = payload.description;
+    if (sanitizedDescription !== undefined) updates.description = sanitizedDescription;
     if (payload.date !== undefined) updates.date = payload.date;
 
     const { data, error } = await supabase

@@ -9,6 +9,31 @@ interface RegisterPageProps {
   onNavigate: (page: "landing" | "login") => void;
 }
 
+function passwordStrength(pw: string): { score: number; label: string; color: string } {
+  let score = 0;
+  if (pw.length >= 6) score += 1;
+  if (pw.length >= 10) score += 1;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score += 1;
+  if (/\d/.test(pw)) score += 1;
+  if (/[^a-zA-Z0-9]/.test(pw)) score += 1;
+
+  if (score <= 1) return { score, label: "Lemah", color: "bg-feedback-danger" };
+  if (score <= 2) return { score, label: "Cukup", color: "bg-accent-orange" };
+  if (score <= 3) return { score, label: "Kuat", color: "bg-accent-lime" };
+  return { score: 4, label: "Sangat Kuat", color: "bg-accent-lime" };
+}
+
+function toGenericRegisterError(err: unknown): string {
+  const msg = err instanceof Error ? err.message.toLowerCase() : "";
+  if (msg.includes("already registered") || msg.includes("already_exists") || msg.includes("duplicate")) {
+    return "Email sudah terdaftar";
+  }
+  if (msg.includes("password")) {
+    return "Password terlalu lemah. Minimal 6 karakter dengan kombinasi huruf dan angka";
+  }
+  return "Pendaftaran gagal, coba lagi";
+}
+
 export function RegisterPage({ onNavigate }: RegisterPageProps) {
   const register = useAuthStore((s) => s.register);
   const [name, setName] = useState("");
@@ -20,6 +45,8 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [successEmail, setSuccessEmail] = useState<string | null>(null);
+
+  const strength = passwordStrength(password);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +78,7 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
       await register(name, email, password);
       setSuccessEmail(email);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Pendaftaran gagal, coba lagi");
+      setError(toGenericRegisterError(err));
     } finally {
       setLoading(false);
     }
@@ -177,6 +204,23 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
+                {password.length > 0 && (
+                  <div className="mt-1.5 space-y-1">
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4].map((i) => (
+                        <div
+                          key={i}
+                          className={`h-1 flex-1 rounded-full transition-colors ${
+                            i <= strength.score ? strength.color : "bg-base-ink/10"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <p className={`font-body text-xs ${strength.color.replace("bg-", "text-")}`}>
+                      {strength.label}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div>
