@@ -14,6 +14,11 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
+export function formatRupiah(value: number | undefined): string {
+  if (value === undefined || isNaN(value)) return "";
+  return value.toLocaleString("id-ID");
+}
+
 export function formatDate(date: string): string {
   return new Intl.DateTimeFormat("id-ID", {
     day: "numeric",

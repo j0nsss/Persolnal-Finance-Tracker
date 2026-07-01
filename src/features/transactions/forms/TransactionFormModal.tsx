@@ -7,6 +7,7 @@ import { Input } from "../../../components/ui/Input/Input";
 import { Select } from "../../../components/ui/Select/Select";
 import { Button } from "../../../components/ui/Button/Button";
 import { CATEGORY_LIST } from "../../../lib/constants";
+import { formatRupiah } from "../../../lib/utils";
 import { transactionSchema, type TransactionFormValues } from "./transactionSchema";
 import type { NewTransactionInput } from "../../../types/transaction";
 
@@ -119,12 +120,23 @@ export function TransactionFormModal({ open, onOpenChange, onSubmit }: Transacti
         </AnimatePresence>
 
         <motion.div variants={shakeVariants} animate={errors.amount ? "shake" : ""}>
-          <Input
-            type="number"
-            placeholder="Jumlah (Rp)"
-            className={`font-mono ${accentBorder}`}
-            error={errors.amount?.message}
-            {...register("amount", { valueAsNumber: true })}
+          <Controller
+            name="amount"
+            control={control}
+            render={({ field }) => (
+              <Input
+                type="text"
+                inputMode="numeric"
+                placeholder="Jumlah (Rp)"
+                className={`font-mono ${accentBorder}`}
+                error={errors.amount?.message}
+                value={field.value ? formatRupiah(field.value) : ""}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, "");
+                  field.onChange(digits ? Number(digits) : undefined);
+                }}
+              />
+            )}
           />
         </motion.div>
 
