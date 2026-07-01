@@ -159,7 +159,7 @@ src/
 
 ## 📄 License
 
-MIT
+All Rights Reserved. See [LICENSE](./LICENSE) for details.
 
 ---
 
