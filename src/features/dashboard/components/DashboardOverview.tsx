@@ -7,9 +7,11 @@ import { useDashboardSummary } from "../hooks/useDashboardSummary";
 import { SummaryCardGroup } from "./SummaryCardGroup";
 import { ChartFilterBar, type PeriodFilter } from "./ChartFilterBar";
 import { MonthlyAreaChart } from "./MonthlyAreaChart";
+import { DailyTrackerCard } from "./DailyTrackerCard";
+import { WeeklyTrendCard } from "./WeeklyTrendCard";
 import { CategoryDonutChart } from "./CategoryDonutChart";
 import { formatCurrency } from "../../../lib/utils";
-import { subMonths, startOfMonth, endOfMonth, format } from "date-fns";
+import { subMonths, startOfMonth, endOfMonth } from "date-fns";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -151,12 +153,26 @@ export function DashboardOverview() {
         <SummaryCardGroup data={extendedSummary} period={summary.period} />
       </motion.div>
 
-      <motion.div variants={itemVariants}>
-        <Card className="p-5">
-          <ChartFilterBar period={period} onPeriodChange={setPeriod} />
-          <MonthlyAreaChart transactions={transactions} period={period} />
-        </Card>
-      </motion.div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <motion.div variants={itemVariants} className="lg:col-span-2">
+          <Card className="p-5">
+            <ChartFilterBar period={period} onPeriodChange={setPeriod} />
+            <MonthlyAreaChart transactions={transactions} period={period} />
+          </Card>
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="lg:col-span-1 flex flex-col gap-5">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-6 bg-accent-blue rounded-r-full" />
+            <p className="font-display font-bold text-xs text-base-ink/50 uppercase tracking-widest">
+              Aktivitas &amp; Tren Berkala
+            </p>
+            <div className="h-px flex-1 bg-base-ink/10" />
+          </div>
+          <DailyTrackerCard transactions={transactions} />
+          <WeeklyTrendCard transactions={transactions} />
+        </motion.div>
+      </div>
 
       <motion.div variants={itemVariants}>
         <Card className="p-5">
