@@ -33,6 +33,15 @@
   body {
     @apply bg-base-bg text-base-ink;
   }
+
+  .dark body,
+  body.dark {
+    @apply bg-base-bg-dark text-base-ink-dark;
+  }
+
+  .dark {
+    --brutal-shadow: 4px 4px 0px #F4F4F0;
+  }
 }
 
 @keyframes dinoLegs {

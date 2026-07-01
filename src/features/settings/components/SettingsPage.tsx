@@ -10,6 +10,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useAuthStore } from "../../../store/useAuthStore";
+import { useTheme } from "../../../context/ThemeProvider";
 import { cn } from "../../../lib/utils";
 
 const sections = [
@@ -65,8 +66,8 @@ const currencyOptions = [
 
 export function SettingsPage() {
   const user = useAuthStore((s) => s.user);
+  const { theme: currentTheme, themeMode, setThemeMode } = useTheme();
   const [activeSection, setActiveSection] = useState("profile");
-  const [theme, setTheme] = useState("light");
   const [currency, setCurrency] = useState("IDR");
   const [notificationToggles, setNotificationToggles] = useState([true, true, false]);
 
@@ -122,10 +123,10 @@ export function SettingsPage() {
                 {appearanceOptions.map((opt) => (
                   <button
                     key={opt.value}
-                    onClick={() => setTheme(opt.value)}
+                    onClick={() => setThemeMode(opt.value as "light" | "dark" | "system")}
                     className={cn(
                       "flex-1 px-4 py-4 rounded-brutal border-3 border-base-ink font-display font-bold text-sm transition-all",
-                      theme === opt.value
+                      themeMode === opt.value
                         ? "bg-accent-lime shadow-brutal"
                         : "bg-base-surface hover:shadow-brutal-sm",
                     )}
@@ -137,7 +138,12 @@ export function SettingsPage() {
             </div>
 
             <div className="p-6 bg-base-surface border-3 border-base-ink rounded-brutal shadow-brutal">
-              <h3 className="font-display font-bold text-sm mb-4">Preview Warna</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-display font-bold text-sm">Preview Warna</h3>
+                <span className="font-mono font-bold text-xs px-3 py-1 rounded-brutal border-2 border-base-ink bg-base-ink/5">
+                  {currentTheme === "dark" ? "Dark" : "Light"}
+                </span>
+              </div>
               <div className="flex gap-3">
                 {["bg-accent-lime", "bg-accent-pink", "bg-accent-orange", "bg-accent-blue", "bg-base-ink"].map((c) => (
                   <div key={c} className={cn("w-10 h-10 rounded-brutal border-3 border-base-ink", c)} />
