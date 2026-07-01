@@ -21,7 +21,7 @@ create table if not exists public.transactions (
   user_id     uuid not null references auth.users(id) on delete cascade,
   amount      integer not null check (amount > 0),
   type        text not null check (type in ('income', 'expense')),
-  category_id text not null,
+  category_id text not null check (category_id in ('food', 'transport', 'housing', 'entertainment', 'health', 'shopping', 'salary', 'investment', 'other')),
   description text not null default '',
   date        date not null,
   created_at  timestamptz not null default now(),
