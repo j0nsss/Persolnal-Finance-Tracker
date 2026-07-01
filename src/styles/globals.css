@@ -24,6 +24,40 @@
     font-display: swap;
   }
 
+  :root {
+    --color-base-bg: 244 244 240;
+    --color-base-ink: 0 0 0;
+    --color-base-surface: 255 255 255;
+    --color-accent-lime: 212 255 63;
+    --color-accent-pink: 255 63 142;
+    --color-accent-orange: 255 107 26;
+    --color-accent-blue: 63 142 255;
+    --color-feedback-success: 0 200 83;
+    --color-feedback-danger: 255 59 48;
+    --shadow-brutal: 4px 4px 0px #000000;
+    --shadow-brutal-sm: 2px 2px 0px #000000;
+    --shadow-brutal-lg: 8px 8px 0px #000000;
+    --shadow-brutal-pressed: 1px 1px 0px #000000;
+    --shadow-brutal-accent: 4px 4px 0px #D4FF3F;
+  }
+
+  .dark {
+    --color-base-bg: 18 18 18;
+    --color-base-ink: 232 230 224;
+    --color-base-surface: 30 30 30;
+    --color-accent-lime: 184 230 53;
+    --color-accent-pink: 255 90 158;
+    --color-accent-orange: 255 123 51;
+    --color-accent-blue: 85 153 255;
+    --color-feedback-success: 0 224 96;
+    --color-feedback-danger: 255 85 85;
+    --shadow-brutal: 4px 4px 0px #E8E6E0;
+    --shadow-brutal-sm: 2px 2px 0px #E8E6E0;
+    --shadow-brutal-lg: 8px 8px 0px #E8E6E0;
+    --shadow-brutal-pressed: 1px 1px 0px #E8E6E0;
+    --shadow-brutal-accent: 4px 4px 0px #B8E635;
+  }
+
   html {
     font-family: "Inter", sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -32,15 +66,6 @@
 
   body {
     @apply bg-base-bg text-base-ink;
-  }
-
-  .dark body,
-  body.dark {
-    @apply bg-base-bg-dark text-base-ink-dark;
-  }
-
-  .dark {
-    --brutal-shadow: 4px 4px 0px #F4F4F0;
   }
 }
 

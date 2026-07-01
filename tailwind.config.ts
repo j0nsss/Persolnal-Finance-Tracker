@@ -7,22 +7,19 @@ export default {
     extend: {
       colors: {
         base: {
-          bg: "#F4F4F0",
-          ink: "#000000",
-          surface: "#FFFFFF",
-          "bg-dark": "#1A1A1A",
-          "ink-dark": "#F4F4F0",
-          "surface-dark": "#2A2A2A",
+          bg: "rgb(var(--color-base-bg) / <alpha-value>)",
+          ink: "rgb(var(--color-base-ink) / <alpha-value>)",
+          surface: "rgb(var(--color-base-surface) / <alpha-value>)",
         },
         accent: {
-          lime: "#D4FF3F",
-          pink: "#FF3F8E",
-          orange: "#FF6B1A",
-          blue: "#3F8EFF",
+          lime: "rgb(var(--color-accent-lime) / <alpha-value>)",
+          pink: "rgb(var(--color-accent-pink) / <alpha-value>)",
+          orange: "rgb(var(--color-accent-orange) / <alpha-value>)",
+          blue: "rgb(var(--color-accent-blue) / <alpha-value>)",
         },
         feedback: {
-          success: "#00C853",
-          danger: "#FF3B30",
+          success: "rgb(var(--color-feedback-success) / <alpha-value>)",
+          danger: "rgb(var(--color-feedback-danger) / <alpha-value>)",
         },
       },
       fontFamily: {
@@ -31,14 +28,11 @@ export default {
         body: ["'Inter'", "sans-serif"],
       },
       boxShadow: {
-        brutal: "4px 4px 0px #000000",
-        "brutal-sm": "2px 2px 0px #000000",
-        "brutal-lg": "8px 8px 0px #000000",
-        "brutal-pressed": "1px 1px 0px #000000",
-        "brutal-accent": "4px 4px 0px #D4FF3F",
-        "brutal-dark": "4px 4px 0px #F4F4F0",
-        "brutal-sm-dark": "2px 2px 0px #F4F4F0",
-        "brutal-lg-dark": "8px 8px 0px #F4F4F0",
+        brutal: "var(--shadow-brutal)",
+        "brutal-sm": "var(--shadow-brutal-sm)",
+        "brutal-lg": "var(--shadow-brutal-lg)",
+        "brutal-pressed": "var(--shadow-brutal-pressed)",
+        "brutal-accent": "var(--shadow-brutal-accent)",
       },
       borderWidth: {
         3: "3px",
