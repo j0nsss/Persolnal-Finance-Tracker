@@ -67,22 +67,22 @@ export function DailyTrackerCard({ transactions }: DailyTrackerCardProps) {
         </div>
       </div>
 
-      <div className="h-16 mt-3">
+          <div className="h-16 mt-3">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={dailyData} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
             <defs>
-              <linearGradient id="dailyGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#000000" stopOpacity={0.25} />
-                <stop offset="100%" stopColor="#000000" stopOpacity={0.0} />
+              <linearGradient id="dailyGradWhite" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#FFFFFF" stopOpacity={0.35} />
+                <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0.05} />
               </linearGradient>
             </defs>
             <Area
               type="monotone"
               dataKey="value"
               stroke="#000000"
-              strokeWidth={2}
-              fill="url(#dailyGrad)"
-              dot={false}
+              strokeWidth={3}
+              fill="url(#dailyGradWhite)"
+              dot={{ stroke: '#000000', strokeWidth: 2, fill: '#FFFFFF', r: 4, fillOpacity: 1 }}
               isAnimationActive={true}
               animationDuration={800}
             />

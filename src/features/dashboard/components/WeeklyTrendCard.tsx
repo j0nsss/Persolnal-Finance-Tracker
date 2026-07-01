@@ -73,10 +73,11 @@ export function WeeklyTrendCard({ transactions }: WeeklyTrendCardProps) {
           <BarChart data={weeklyData} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
             <Bar
               dataKey="value"
-              fill="#000000"
+              fill="#FF3F8E"
               stroke="#000000"
-              strokeWidth={1.5}
-              radius={[2, 2, 0, 0]}
+              strokeWidth={2.5}
+              radius={[4, 4, 0, 0]}
+              minPointSize={5}
               isAnimationActive={true}
               animationDuration={800}
             />
