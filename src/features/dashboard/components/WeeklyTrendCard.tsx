@@ -45,8 +45,6 @@ export function WeeklyTrendCard({ transactions }: WeeklyTrendCardProps) {
     return { weeklyData, totalMovement };
   }, [transactions]);
 
-  const maxVal = Math.max(...weeklyData.map((d) => d.value), 1);
-
   return (
     <motion.div
       whileHover={{ scale: 1.01, translateY: -2 }}

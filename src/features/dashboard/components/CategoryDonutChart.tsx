@@ -110,7 +110,7 @@ export function CategoryDonutChart({ transactions }: CategoryDonutChartProps) {
 
   if (slices.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center border-3 border-dashed border-base-ink/20 rounded-brutal">
+      <div className="h-48 md:h-64 flex items-center justify-center border-3 border-dashed border-base-ink/20 rounded-brutal">
         <div className="text-center">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-2 text-base-ink/20">
             <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
@@ -124,8 +124,8 @@ export function CategoryDonutChart({ transactions }: CategoryDonutChartProps) {
 
   return (
     <div className="flex flex-col md:flex-row items-center gap-6">
-      <div className="relative shrink-0">
-        <ResponsiveContainer width={200} height={200}>
+      <div className="relative w-full max-w-[220px] mx-auto md:mx-0 shrink-0">
+        <ResponsiveContainer width="100%" height={220}>
           <PieChart>
             <Pie
               data={slices.map((s) => ({ ...s, value: s.value || 0.001 }))}

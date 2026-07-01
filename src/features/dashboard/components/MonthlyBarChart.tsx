@@ -14,7 +14,9 @@ import { id } from "date-fns/locale/id";
 import { motion } from "framer-motion";
 import type { Transaction } from "../../../types/transaction";
 import { formatCurrency } from "../../../lib/utils";
-import type { PeriodFilter, ChartTypeFilter } from "./ChartFilterBar";
+import type { PeriodFilter } from "./ChartFilterBar";
+
+type ChartTypeFilter = "income" | "expense" | "both";
 
 interface MonthlyBarChartProps {
   transactions: Transaction[];

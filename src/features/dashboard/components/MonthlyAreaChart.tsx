@@ -110,14 +110,14 @@ export function MonthlyAreaChart({ transactions, period }: MonthlyAreaChartProps
 
   if (chartData.every((d) => d.income === 0 && d.expense === 0)) {
     return (
-      <div className="h-72 flex items-center justify-center border-3 border-dashed border-base-ink/20 rounded-brutal">
+      <div className="h-48 md:h-72 flex items-center justify-center border-3 border-dashed border-base-ink/20 rounded-brutal">
         <p className="font-body text-base-ink/40">Belum ada data transaksi</p>
       </div>
     );
   }
 
   return (
-    <div className="h-72">
+    <div className="h-48 md:h-72">
       <svg width={0} height={0} className="absolute">
         <defs>
           <linearGradient id={`${gradientId}-income`} x1="0" y1="0" x2="0" y2="1">
@@ -131,7 +131,7 @@ export function MonthlyAreaChart({ transactions, period }: MonthlyAreaChartProps
         </defs>
       </svg>
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={chartData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+          <AreaChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#000" strokeOpacity={0.1} vertical={false} horizontal={true} />
           <XAxis dataKey="label" tick={{ fontFamily: "Inter, sans-serif", fontSize: 12, fill: "#000" }} tickLine={false} axisLine={{ stroke: "#000", strokeWidth: 2 }} />
           <YAxis domain={[0, maxVal * 1.15]} tick={{ fontFamily: "JetBrains Mono, monospace", fontSize: 11, fill: "#000" }} tickLine={false} axisLine={{ stroke: "#000", strokeWidth: 2 }} tickFormatter={(v: number) => v >= 1_000_000 ? `${(v / 1_000_000).toFixed(0)}jt` : v >= 1000 ? `${(v / 1000).toFixed(0)}rb` : `${v}`} />

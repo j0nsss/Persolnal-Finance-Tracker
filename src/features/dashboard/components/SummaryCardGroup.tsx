@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Wallet } from "lucide-react";
 import { SummaryCard } from "./SummaryCard";
 

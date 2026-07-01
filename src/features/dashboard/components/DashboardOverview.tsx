@@ -10,7 +10,6 @@ import { MonthlyAreaChart } from "./MonthlyAreaChart";
 import { DailyTrackerCard } from "./DailyTrackerCard";
 import { WeeklyTrendCard } from "./WeeklyTrendCard";
 import { CategoryDonutChart } from "./CategoryDonutChart";
-import { formatCurrency } from "../../../lib/utils";
 import { subMonths, startOfMonth, endOfMonth } from "date-fns";
 
 const containerVariants = {
@@ -23,7 +22,7 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
 function GreetingHeader({ insight }: { insight: string }) {
@@ -127,7 +126,7 @@ export function DashboardOverview() {
 
   if (isLoading) {
     return (
-      <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-6">
+    <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-4 md:space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <motion.div key={i} variants={itemVariants}>
