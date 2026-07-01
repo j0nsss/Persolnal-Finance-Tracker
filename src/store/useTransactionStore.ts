@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { Transaction, NewTransactionInput } from "../types/transaction";
 import type { CategoryId } from "../types/category";
-import { transactionApi } from "../lib/mockApi/transactionApi";
+import { transactionApi } from "../lib/supabase/transactionApi";
 
 interface TransactionState {
   transactions: Transaction[];

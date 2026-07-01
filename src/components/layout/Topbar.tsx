@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
+import { LogOut } from "lucide-react";
 import { useUIStore } from "../../store/useUIStore";
+import { useAuthStore } from "../../store/useAuthStore";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { cn } from "../../lib/utils";
 
@@ -21,6 +23,7 @@ interface TopbarProps {
 
 export function Topbar({ onAddTransaction }: TopbarProps) {
   const { activeTab, setActiveTab } = useUIStore();
+  const logout = useAuthStore((s) => s.logout);
   const isMobile = useMediaQuery("(max-width: 767px)");
 
   return (
@@ -30,13 +33,22 @@ export function Topbar({ onAddTransaction }: TopbarProps) {
           {tabLabels[activeTab] || "Overview"}
         </h2>
 
-        <button
-          onClick={onAddTransaction}
-          className="font-display font-bold text-sm rounded-brutal border-3 border-base-ink bg-accent-lime px-4 md:px-5 py-2.5 shadow-brutal hover:shadow-brutal-lg active:shadow-brutal-pressed transition-shadow"
-          aria-label="Tambah transaksi baru"
-        >
-          + Transaksi
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onAddTransaction}
+            className="font-display font-bold text-sm rounded-brutal border-3 border-base-ink bg-accent-lime px-4 md:px-5 py-2.5 shadow-brutal hover:shadow-brutal-lg active:shadow-brutal-pressed transition-shadow"
+            aria-label="Tambah transaksi baru"
+          >
+            + Transaksi
+          </button>
+          <button
+            onClick={logout}
+            className="rounded-brutal border-3 border-base-ink p-2.5 hover:bg-base-ink/5 transition-colors"
+            aria-label="Keluar"
+          >
+            <LogOut size={16} strokeWidth={2.5} />
+          </button>
+        </div>
       </div>
 
       {isMobile && (

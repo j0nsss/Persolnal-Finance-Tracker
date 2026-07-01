@@ -15,7 +15,6 @@ export function ChartFilterBar({ period, onPeriodChange }: ChartFilterBarProps) 
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
       <div className="flex items-center gap-2 sm:gap-3">
         <div className="w-2 h-6 sm:h-8 bg-accent-lime rounded-r-full shrink-0" />
-        <div className="w-2 h-6 sm:h-8 bg-accent-pink rounded-r-full shrink-0" />
         <p className="font-display font-bold text-sm sm:text-lg leading-tight">Arus Kas Bulanan</p>
       </div>
       <div className="flex rounded-brutal border-3 border-base-ink overflow-hidden self-start sm:self-auto" role="group" aria-label="Periode grafik">

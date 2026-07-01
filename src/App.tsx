@@ -8,6 +8,10 @@ import { TransactionFormModal } from "./features/transactions/forms/TransactionF
 import { useTransactionActions } from "./features/transactions/hooks/useTransactionActions";
 import { StyleGuide } from "./pages/dev/StyleGuide";
 import { useUIStore } from "./store/useUIStore";
+import { useAuthStore } from "./store/useAuthStore";
+import { LandingPage } from "./pages/LandingPage";
+import { LoginPage } from "./pages/LoginPage";
+import { RegisterPage } from "./pages/RegisterPage";
 
 const AnalyticsView = lazy(() =>
   import("./features/analytics/components/AnalyticsView").then((m) => ({
@@ -56,17 +60,44 @@ function DashboardContent() {
 }
 
 function App() {
+  const { isAuthenticated, isLoading, initialize } = useAuthStore();
+  const [page, setPage] = useState<"landing" | "login" | "register">("landing");
   const [isStyleGuide, setIsStyleGuide] = useState(false);
 
   useEffect(() => {
     setIsStyleGuide(window.location.pathname.startsWith("/dev/styleguide"));
-  }, []);
+    initialize();
+  }, [initialize]);
 
   if (isStyleGuide) {
     return (
       <ThemeProvider>
         <MotionConfig reducedMotion="user">
           <StyleGuide />
+        </MotionConfig>
+      </ThemeProvider>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <ThemeProvider>
+        <MotionConfig reducedMotion="user">
+          <div className="min-h-screen bg-base-bg flex items-center justify-center">
+            <p className="font-display font-bold text-base-ink/40">Memuat...</p>
+          </div>
+        </MotionConfig>
+      </ThemeProvider>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <ThemeProvider>
+        <MotionConfig reducedMotion="user">
+          {page === "landing" && <LandingPage onNavigate={setPage} />}
+          {page === "login" && <LoginPage onNavigate={setPage} />}
+          {page === "register" && <RegisterPage onNavigate={setPage} />}
         </MotionConfig>
       </ThemeProvider>
     );
