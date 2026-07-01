@@ -5,7 +5,7 @@
 
 <h1 align="center">
   <br>
-  <img src="public/favicon.svg" alt="NeoFin" width="64" height="64">
+  <img src="public/favicon.svg?v=2" alt="NeoFin" width="64" height="64">
   <br>
   NeoFin
   <br>
